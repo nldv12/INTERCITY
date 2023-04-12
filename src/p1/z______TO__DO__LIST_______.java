@@ -54,7 +54,7 @@ public class z______TO__DO__LIST_______ {
 
      ---- 100 Stations
      ---- 25 Trains every 5-10 Cars
-
+mmjmj
      ---- Presentation.java
             każda funkcjonalność (strategiczna) dostępna do zaprezentowanai w prosty sposób (czytelny)
 
