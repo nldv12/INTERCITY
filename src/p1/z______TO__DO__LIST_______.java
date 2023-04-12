@@ -3,10 +3,6 @@ package p1;
 public class z______TO__DO__LIST_______ {
     /*
    Питання до сергія:
-   1. Чому коли я творю 100 станцій і 50 ліній деколи твориться менше ніж 50?
-   2. чм треба чистити або закривати BufferedReader 35l TaskCLI
-   3. Для чого нам мапа станцій в Rails systems чому це не може бути List
-   4. Чи можливо зробити так щоб можна було вписати більше ніж 1 букву и краще щоб була 1 але не понятна
    5. Чому локомотив не пропадає яукщо я його додав СLI 176 linia
    6.
    7.
@@ -30,6 +26,7 @@ public class z______TO__DO__LIST_______ {
     ---- Postój na stacjach pośrednich trwa 2 sekundy. Po dotarciu na stację docelową skład
             pociągu oczekuje 30 sekund, a następnie pociąg wyrusza w drogę powrotną
             (ponownie ustalając trasę) i kursuje cały czas w tym cyklu.
+   system miliseconds
 
     ---- Kolejki na stacjach
             Należy zaimplementować również prewencję kolizji, w której pomiędzy dwoma stacjami może

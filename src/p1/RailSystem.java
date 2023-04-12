@@ -13,7 +13,7 @@ public class RailSystem {
     Map<String, Station> stations = new LinkedHashMap <>();
     Map<String, Locomotive> locomotives = new LinkedHashMap <>();
     Map<String, Car> cars = new LinkedHashMap <>();
-    Map<String, Line> lines = new HashMap<>();
+    Map<String, Line> lines = new LinkedHashMap<>();
 
     Map<String, Train> trains = new HashMap<>();
 
@@ -33,6 +33,7 @@ public class RailSystem {
         // tworzę połaczenie między poszczególnymi stacjami
 
         for (int i = 0; i < 50; i++) {
+            // while line size < 50
             //zabezpieczenie żeby nie dublować takich samych połaczeń
             int i1 = random.nextInt(stations.size()-2+1) + 1;
             int i2 = random.nextInt(i1);
@@ -43,8 +44,11 @@ public class RailSystem {
             String key2 = stationEntries.get(i2).getKey();
             Station station2 = stationEntries.get(i2).getValue();
             String key = key1 + "_" + key2;
+            String revertedKey = key2 + "_" + key1;
             Line line = new Line(key1, key2);
+            Line revertedLine = new Line(key2, key1);
             lines.put(key, line);
+            lines.put(revertedKey, revertedLine);
         }
     }
 

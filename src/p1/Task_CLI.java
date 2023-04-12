@@ -62,7 +62,6 @@ public class Task_CLI implements Runnable {
                         if (c == '\n') {// tu nic nie powinno się wyswietlić
                         } else System.out.println("Niema takiego polecenia");
                     }
-                    // clear the buffer for the next read
                 } else if (railSystem.alerts.size() > 0) {
                     String alert = railSystem.alerts.remove();
                     System.out.println(alert);
@@ -71,7 +70,7 @@ public class Task_CLI implements Runnable {
                 e.printStackTrace();
             }
             try {
-                Thread.sleep(1);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
