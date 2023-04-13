@@ -5,6 +5,7 @@ import p1.Cars.CargoCars.BasicCargoCar;
 import p1.Exeptions.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Train {
@@ -15,18 +16,11 @@ public class Train {
     }
     private boolean isCargo;
     double position;
-    String key;
+    private final String key;
+    private String homeStationName;
     private String locomotiveName;
-    List<String> carsNames = new ArrayList<>();
+    List<String> carsNames = new LinkedList<>();
     Path path;
-
-
-
-    void setlocomotiveName(String name) {
-        this.locomotiveName = name;
-    }
-
-
 
     void showCars() {
         for (String car : carsNames) {
@@ -34,18 +28,33 @@ public class Train {
         }
     }
 
-
-
-    @Override
-    public String toString() {
-        return "Pociąg: " + this.key + " Lokomotywa: " + this.locomotiveName + " ilosc wagonów: " + this.carsNames.size();
+    public boolean isCargo() {
+        return isCargo;
     }
 
+    // Getery
     public String getLocomotiveName() {
         return locomotiveName;
     }
+    public String getHomeStationName() {
+        return homeStationName;
+    }
 
-    public boolean isCargo() {
-        return isCargo;
+    // Setery
+    void setlocomotiveName(String name) {
+        this.locomotiveName = name;
+    }
+    public void setHomeStationName(String homeStationName) {
+        this.homeStationName = homeStationName;
+    }
+
+    @Override
+    public String toString() {
+        return "Pociąg: " + this.key
+                + " Lokomotywa: "
+                + this.locomotiveName
+                + " ilosc wagonów: "
+                + this.carsNames.size()
+                + "stacja macierzysta: "+ this.homeStationName;
     }
 }

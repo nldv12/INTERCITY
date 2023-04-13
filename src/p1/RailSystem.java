@@ -15,7 +15,7 @@ public class RailSystem {
     Map<String, Car> cars = new LinkedHashMap <>();
     Map<String, Line> lines = new LinkedHashMap<>();
 
-    Map<String, Train> trains = new HashMap<>();
+    Map<String, Train> trains = new LinkedHashMap<>();
 
 
 

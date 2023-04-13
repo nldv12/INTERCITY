@@ -35,6 +35,7 @@ public class Task_CLI implements Runnable {
                     if (c == 'r') {
                         System.out.println("Wciśnąłeś r");
                         test();
+                        getTrainReport();
                         commandlist();
                     } else if (c == 's') {
                         System.out.println("Wciśnąłeś s");
@@ -90,6 +91,85 @@ public class Task_CLI implements Runnable {
         System.out.println("c - tworzenie nowego wagonu");
     }
 
+    //  Raport /////////////////////
+    public void getTrainReport() {
+        System.out.println("Lista pociągów");
+        List<String> trainKeys = new LinkedList<>();
+        for (Map.Entry<String, Train> entry : railSystem.trains.entrySet()) {
+            trainKeys.add(entry.getKey());
+        }
+        for (String train : trainKeys) {
+            System.out.println(train);
+        }
+        String train = "";
+        boolean selectTrainSucces = false;
+        while (!selectTrainSucces) {
+            System.out.println("Wpisz albo skopiuj wybrany pociąg");
+            train = sc.nextLine();
+            if (trainKeys.contains(train)) {
+                selectTrainSucces = true;
+            } else {
+                if (train == "\n") {
+                    System.out.println("kliknąłeś sam enter bez żadnej wartośći");
+                }
+                System.out.println("Bład, niema takiego pociągu");
+            }
+        }
+
+        String lokomotywa = railSystem.trains.get(train).getLocomotiveName();
+        int iloscWagonow = railSystem.trains.get(train).carsNames.size();
+        String stacjaMacierzysta = railSystem.trains.get(train).getHomeStationName();
+
+
+        System.out.println("Wybrałeś pociąg: " + train);
+        System.out.println("Lokomotywa: " + lokomotywa);
+        System.out.println("Ilość wagonów: " + iloscWagonow);
+        System.out.println("Stacja macierzysta: " + stacjaMacierzysta);
+        System.out.println("Wagony:");
+        railSystem.trains.get(train).showCars();
+
+
+    }
+
+
+    //  Stacja /////////////////////
+    public void newStation() {
+        Scanner sc = new Scanner(System.in);
+        boolean keySuccess = false;
+        //tworzę tymczasową listę stacji
+        List<String> listedStations = new LinkedList<>();
+        for (Map.Entry<String, Station> entry : railSystem.stations.entrySet()) {
+            listedStations.add(entry.getKey());
+        }
+
+        System.out.println("Nazwa stacji powinna być pisana dużymi literami \nbez spacji, liczb i innych znaków");
+        System.out.println("Podaj nazwę stacji");
+
+        while (!keySuccess) {
+            String key = sc.nextLine();
+
+            if (listedStations.contains(key)) {
+                System.out.println("Taka stacja już istnieje wymyśl inną nazwę dla nowej stacji");
+            } else {
+                if (key.matches("[A-Z]+")) {
+                    Station station = new Station(key);
+                    railSystem.stations.put(key, station);
+                    operationalStationName = key;
+                    System.out.println("Utworzyłeś nową stację: " + operationalStationName);
+                    keySuccess = true;
+
+                } else {
+                    System.out.println("Nazwa stacji powinna być pisana dużymi literami \nbez spacji, liczb i innych znaków");
+                    System.out.println("Podaj nazwę stacji");
+                }
+            }
+
+
+        }
+
+
+    }
+
     public void chooseStation() {
         Scanner sc = new Scanner(System.in);
         boolean stationDecisionSucces = false;
@@ -132,6 +212,263 @@ public class Task_CLI implements Runnable {
             }
 
         }
+    }
+//  Pociąg /////////////////////
+
+    public void newTrain() {
+        System.out.println("Pociąg można stworzyć tylko na jakiejś stacji");
+        chooseStation();
+
+        System.out.println("Teraz tworzymy pociąg na stacji: " + operationalStationName);
+        trainKeyInterface();
+
+        System.out.println("Dodajmy lokomotywę do naszego pociągu");
+        chooseLocomotive();
+        railSystem.trains.get(operationalTrainKey).setlocomotiveName(operationalLocomotiveName);
+        railSystem.locomotives.get(operationalLocomotiveName).setHomeStation("");
+
+
+        System.out.println("To teraz dodajemy wagony do lokomotywy: "
+                + operationalLocomotiveName + " na stacji: " + operationalStationName);
+
+        trainAddCarInterface();
+
+        System.out.println("Twój pociąg: ");
+        System.out.println(railSystem.trains.get(operationalTrainKey));
+        System.out.println("Wagony: ");
+        railSystem.trains.get(operationalTrainKey).showCars();
+        System.out.println("Pociąg utworzony poprawnie, podaj następne polecenie");
+
+
+    }
+
+    public void trainKeyInterface() {
+        String key = "";
+        boolean keySuccess = false;
+        // Interfejs klucza pociągu
+        System.out.println("Podaj identyfikator pociągu (klucz)");
+        System.out.println();
+        System.out.println("""
+                Przykład:
+                Cargo train: CT 0001 - (pociąg ciężarowy)
+                Passenger train: PT 0001 - (pociąg osobowy)
+                                
+                Uwaga! Pierwsze 2 litery są bardzo ważne od nich zależy jakiego typu będzie to pociąg.
+                Bagaż i pocztę można przewozić tylko pociągami osobowymi""");
+
+        while (!keySuccess) {
+            //tymczasowa lista nazw pociągów
+            List<String> trainKeys = new ArrayList<>();
+            for (Map.Entry<String, Train> entry : railSystem.trains.entrySet()) {
+                trainKeys.add(entry.getKey());
+            }
+
+            key = sc.nextLine();
+            System.out.println();
+
+            // walidacja do pola key
+            if (key.length() != 7 || !key.contains(" "))
+                System.out.println("Klucz który podałeś nie jest odpowiedni, poprawny format zapisu to : PT #### lub CT ####");
+            else if (!Character.isUpperCase(key.charAt(0)) && !Character.isUpperCase(key.charAt(1))) {
+                System.out.println("Dwie pierwsze litery powinne być duże i w czytelny sposób reprezentować typ pociągu" +
+                        " na przykład PT - Passenger Train");
+            } else if (!Character.isDigit(key.charAt(3)) && !Character.isDigit(key.charAt(4))
+                    && !Character.isDigit(key.charAt(5)) && !Character.isDigit(key.charAt(6))) {
+                System.out.println("Cztery ostatnie znaki powinny być liczbami np: CT 0001");
+            } else if (key.charAt(3) == 0 && key.charAt(4) == 0
+                    && key.charAt(5) == 0 && key.charAt(6) == 0) {
+                System.out.println("Numer pociągu nie może być: 0000");
+            } else if ((key.charAt(0) != 'P' && key.charAt(1) != 'T') || (key.charAt(0) != 'C' && key.charAt(1) != 'T')) {
+                System.out.println("Pierwsze 2 litery powinne reprezentować jeden z typów pociągu, PT lub CT");
+            } else if (trainKeys.contains(key)) {
+                System.out.println("Istnieje już pociąg z takim kluczem, wymyśl nowy klucz");
+            } else {
+// Tworzymy nowy pociąg
+                railSystem.trains.put(key, new Train(key));
+                railSystem.trains.get(key).setHomeStationName(operationalStationName);
+                if (key.charAt(0) == 'C') {
+                    operationalCarIsCargo = true;
+                } else if (key.charAt(0) == 'P') {
+                    operationalCarIsCargo = false;
+                }
+                keySuccess = true;
+                operationalTrainKey = key;
+                System.out.println("Udało się stworzyłeś pociąg");
+            }
+        }
+    }
+
+    public void trainAddCarInterface() {
+        boolean addCarSucces = false;
+
+        while (!addCarSucces) {
+            chooseCar();
+            String prevHomeStation = railSystem.cars.get(operationalCarName).getHomeStation();
+            try {
+                railSystem.cars.get(operationalCarName).setHomeStation("");
+                railSystem.cars.get(operationalCarName).setTrainKey(operationalTrainKey);
+                railSystem.trains.get(operationalTrainKey).carsNames.add(operationalCarName);
+                validateTrain();
+                trainLoadCarInterface();
+                validateTrain();
+                addCarSucces = true;
+            } catch (TrainValidationException e) {
+                railSystem.cars.get(operationalCarName).setHomeStation(prevHomeStation);
+                railSystem.cars.get(operationalCarName).setTrainKey("");
+                railSystem.trains.get(operationalTrainKey).carsNames.remove(operationalCarName);
+                System.out.println("Błąd: " + e.getMessage());
+            }
+        }
+        System.out.println("Chcesz dodać jeszcze jeden wagon do tego pociągu?");
+        System.out.println("Wpisz t jeśli tak lub n jeśli nie");
+
+        boolean addMoreSucces = false;
+        while (!addMoreSucces) {
+            String addMore = sc.nextLine();
+            if (addMore.length() > 1 || addMore.length() < 1)
+                System.out.println("Nie wygłupiaj się wpisz t lub n");
+            else {
+                if (addMore.equals("t")) {
+                    addMoreSucces = true;
+                    trainAddCarInterface();
+                } else if (addMore.equals("n")) {
+                    addMoreSucces = true;
+                } else {
+                    System.out.println("Nie wygłupiaj się wpisz t lub n");
+                }
+            }
+        }
+    }
+
+    public void trainLoadCarInterface() {
+        System.out.println("Dodajmy teraz ładunek do wagonu");
+        boolean currentCarIsCargo = railSystem.cars.get(operationalCarName).isCargo();
+
+        if (currentCarIsCargo) {
+            System.out.println("To jest wagon ciężarowy, podaj masę ładunku w tonach");
+            boolean addWeightSucces = false;
+            while (!addWeightSucces) {
+                String weight = sc.nextLine();
+                if (weight.length() <= 2 && weight.matches("\\d+")) {
+                    if (weight.equals(0)) {
+                        System.out.println("Rozumiem ten wagon ma jechcać bez ładunku");
+                    }
+                    try {
+                        railSystem.cars.get(operationalCarName).incGrossWeight(Integer.parseInt(weight));
+                        validateTrain();
+                        addWeightSucces = true;
+                        System.out.println("Sukces");
+                    } catch (TrainValidationException e) {
+                        int carNetWeight = railSystem.cars.get(operationalCarName).getNetWeight();
+                        railSystem.cars.get(operationalCarName).setGrossWeight(carNetWeight);
+                        System.out.println("Błąd: " + e.getMessage());
+                    }
+                } else {
+                    System.out.println("Masa ładunku może być maksymalnie 2 cyfrowa i nie może zawierać innyc znaków");
+                }
+
+            }
+        } else {
+            System.out.println("To jest wagon osobowy");
+            System.out.println("W przypadku przewozu osób na pokładzie można przyjąć następujące założenie: ");
+            System.out.println("Średnio ładunek wagonu pasażerskiego przy zajętych wszystkich miesjcach " +
+                    "wynosi 10 ton (uwzględniająć bagaże podrózujących osób) ");
+            boolean addWeightSucces = false;
+            while (!addWeightSucces) {
+                System.out.println("Podaj masę ładunku w tonach");
+                String weight = sc.nextLine();
+                if (weight.length() <= 2 && weight.matches("\\d+")) {
+                    if (weight.equals(0)) {
+                        System.out.println("Rozumiem ten wagon ma jechcać bez ładunku");
+                    }
+                    try {
+                        railSystem.cars.get(operationalCarName).incGrossWeight(Integer.parseInt(weight));
+                        validateTrain();
+                        addWeightSucces = true;
+                        System.out.println("Sukces");
+                    } catch (TrainValidationException e) {
+                        int carNetWeight = railSystem.cars.get(operationalCarName).getNetWeight();
+                        railSystem.cars.get(operationalCarName).setGrossWeight(carNetWeight);
+                        System.out.println("Błąd: " + e.getMessage());
+                    }
+                } else {
+                    System.out.println("Masa ładunku może być maksymalnie 2 cyfrowa i nie może zawierać innyc znaków");
+                }
+
+            }
+        }
+    }
+
+    void validateTrain() throws TrainValidationException {
+
+        long carsNumber = railSystem.trains.get(operationalTrainKey).carsNames.size();
+
+        List<Car> thisTrainElectricCars = new LinkedList<>();
+        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
+            if (entry.getValue().getTrainKey().equals(operationalTrainKey) && entry.getValue().needElectricity)
+                thisTrainElectricCars.add(entry.getValue());
+        }
+        long electricCarsNumber = thisTrainElectricCars.size();
+
+        int carsNetWeight = 0;
+        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
+            if (entry.getValue().getTrainKey().equals(operationalTrainKey)) {
+                carsNetWeight += entry.getValue().getNetWeight();
+            }
+        }
+        int carsGrossWeight = 0;
+        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
+            if (entry.getValue().getTrainKey().equals(operationalTrainKey)) {
+                carsGrossWeight += entry.getValue().getGrossWeight();
+            }
+        }
+
+        if (carsNetWeight > railSystem.locomotives.get(operationalLocomotiveName).getMaxPullWeight()) {
+            throw new TrainValidationException("Nie udało się dodać tego wagonu, przekroczono uciąg lokomotywy"
+                    + "\nMaksymalny uciąg to: " + railSystem.locomotives.get(operationalLocomotiveName).getMaxPullWeight()
+                    + " ton a z tym wagonem było by: " + carsNetWeight + " ton"
+            );
+        } else if (carsGrossWeight > railSystem.locomotives.get(operationalLocomotiveName).getMaxPullWeight()) {
+            throw new TrainValidationException("Nie udało się załadować tego wagonu, przekroczono uciąg lokomotywy"
+                    + "\nMaksymalny uciąg to: " + railSystem.locomotives.get(operationalLocomotiveName).getMaxPullWeight()
+                    + " ton a z tym ładunkiem było by: " + carsGrossWeight + " ton"
+            );
+        } else if (carsNumber > railSystem.locomotives.get(operationalLocomotiveName).getMaxCarNumber()) {
+            throw new TrainValidationException("Nie udało się dodać tego wagonu, przekroczono maksymalną ilość wagonów dla lokomotywy, czyli: "
+                    + railSystem.locomotives.get(operationalLocomotiveName).getMaxCarNumber());
+        } else if (electricCarsNumber > railSystem.locomotives.get(operationalLocomotiveName).getMaxElectricCarsNumber()) {
+            throw new TrainValidationException("Nie udało się dodać tego wagonu, przekroczono maksymalną ilość wagonów wymagających " +
+                    "podłączenia do sieci elektrycznej, czyli: " + railSystem.locomotives.get(operationalLocomotiveName).getMaxElectricCarsNumber());
+        } else System.out.println("Wagon pomyślnie dodany do składu pociągu");
+
+    }
+
+    //  Lokomotywa /////////////////////
+    public void newLocomotive() {
+        List<String> listedLocomotives = new LinkedList<>();
+        for (Map.Entry<String, Locomotive> entry : railSystem.locomotives.entrySet()) {
+            listedLocomotives.add(entry.getKey());
+        }
+        System.out.println("Teraz tworzymy Lokomotywę na stacji: " + operationalStationName);
+
+        System.out.println("Podaj nazwę dla lokomotywy");
+        String name = " ";
+        while (name.contains(" ") || name.length() < 2 || listedLocomotives.contains(name)) {
+            name = sc.nextLine();
+            if (name.contains(" ")) {
+                System.out.println("Nazwa nie może zawierać spacji");
+            }
+            if (name.length() < 2)
+                System.out.println("Nazwa powinna składać się z conajmniej dwuch znaków");
+            if (listedLocomotives.contains(name)) {
+                System.out.println("Lokomotywa o takiej nazwie już istnieje wymyśl inną nazwę");
+            }
+        }
+        // tworzenie lokomowywy
+        operationalLocomotiveName = name;
+        railSystem.locomotives.put(name, new Locomotive(name, operationalStationName));
+        System.out.println("Utworzono lokomotywę: " + operationalLocomotiveName + " na stacji: " + operationalStationName);
+
     }
 
     public void chooseLocomotive() {
@@ -194,409 +531,7 @@ public class Task_CLI implements Runnable {
         }
     }
 
-
-    public void chooseCar() {
-        boolean carDecisionSucces = false;
-        boolean ifNoCarsSucces = false;
-
-        System.out.println("Jeśli chcesz utworzyć nowy wagon to wpisz: nw ");
-        System.out.println("Jeśli chcesz wybrac wagon z listy dostępnych na tej stacji to wpisz: lw ");
-
-        while (!carDecisionSucces) {
-            boolean isTrainCargo = railSystem.trains.get(operationalTrainKey).isCargo();
-
-            String carDecision = "";
-            carDecision = sc.nextLine();
-            if (carDecision.equals("lw")) {
-                //tworzę tymczasową listę wagonów na stacji
-                List<String> listedCars = new LinkedList<>();
-                for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
-                    if (isTrainCargo && entry.getValue().getHomeStation().equals(operationalStationName) && entry.getValue().isCargo())
-                        listedCars.add(entry.getKey());
-                    if (!isTrainCargo && entry.getValue().getHomeStation().equals(operationalStationName) && !entry.getValue().isCargo())
-                        listedCars.add(entry.getKey());
-                }
-                // wyswietlam listę wagonów
-                if (listedCars.size() == 0) {
-                    System.out.println("Na tej stacji niema nieprzydzielonych wagonów");
-                    chooseCar();
-                    for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
-                        if (isTrainCargo && entry.getValue().getHomeStation().equals(operationalStationName) && entry.getValue().isCargo())
-                            listedCars.add(entry.getKey());
-                        if (!isTrainCargo && entry.getValue().getHomeStation().equals(operationalStationName) && !entry.getValue().isCargo())
-                            listedCars.add(entry.getKey());
-                    }
-                    carDecision = operationalCarName;
-                    ifNoCarsSucces = true;
-                } else {
-                    System.out.println("Lista wagonów:");
-                    for (String car : listedCars) {
-                        System.out.println(car);
-                    }
-                }
-
-                if (!ifNoCarsSucces) {
-                    System.out.println("Wpisz albo skopiuj nazwę wagonu który chcesz dodać do pociągu");
-                    // walidacja nazwy wagonu
-                    while (!listedCars.contains(carDecision)) {
-                        carDecision = sc.nextLine();
-                        if (!listedCars.contains(carDecision)) {
-                            System.out.println("Wybrany przez ciebie wagon nie istnieje");
-                        }
-                    }
-                }
-                // sukces:
-                if (listedCars.contains(carDecision)) {
-                    carDecisionSucces = true;
-                    operationalCarName = carDecision;
-                }
-
-            } else if (carDecision.equals("nw")) {
-                System.out.println("Tworzymy nowy wagon");
-                newCar();
-                carDecisionSucces = true;
-            } else {
-                System.out.println("poprawny zapis to 2 małe litery lw lub nw, popraw bład");
-            }
-
-        }
-    }
-
-
-    public void newStation() {
-        Scanner sc = new Scanner(System.in);
-        boolean keySuccess = false;
-        //tworzę tymczasową listę stacji
-        List<String> listedStations = new LinkedList<>();
-        for (Map.Entry<String, Station> entry : railSystem.stations.entrySet()) {
-            listedStations.add(entry.getKey());
-        }
-
-        System.out.println("Nazwa stacji powinna być pisana dużymi literami \nbez spacji, liczb i innych znaków");
-        System.out.println("Podaj nazwę stacji");
-
-        while (!keySuccess) {
-            String key = sc.nextLine();
-
-            if (listedStations.contains(key)) {
-                System.out.println("Taka stacja już istnieje wymyśl inną nazwę dla nowej stacji");
-            } else {
-                if (key.matches("[A-Z]+")) {
-                    Station station = new Station(key);
-                    railSystem.stations.put(key, station);
-                    operationalStationName = key;
-                    System.out.println("Utworzyłeś nową stację: " + operationalStationName);
-                    keySuccess = true;
-
-                } else {
-                    System.out.println("Nazwa stacji powinna być pisana dużymi literami \nbez spacji, liczb i innych znaków");
-                    System.out.println("Podaj nazwę stacji");
-                }
-            }
-
-
-        }
-
-
-    }
-
-
-    public void newTrain() {
-        System.out.println("Pociąg można stworzyć tylko na jakiejś stacji");
-        chooseStation();
-
-        System.out.println("Teraz tworzymy pociąg na stacji: " + operationalStationName);
-        trainKeyInterface();
-
-        System.out.println("Dodajmy lokomotywę do naszego pociągu");
-        chooseLocomotive();
-        railSystem.trains.get(operationalTrainKey).setlocomotiveName(operationalLocomotiveName);
-        railSystem.locomotives.get(operationalLocomotiveName).setHomeStation("");
-
-
-        System.out.println("To teraz dodajemy wagony do lokomotywy: "
-                + operationalLocomotiveName + " na stacji: " + operationalStationName);
-
-        trainAddCarInterface();
-
-        System.out.println("Twój pociąg: ");
-        System.out.println(railSystem.trains.get(operationalTrainKey));
-        System.out.println("Wagony: ");
-        railSystem.trains.get(operationalTrainKey).showCars();
-        System.out.println("Pociąg utworzony poprawnie, podaj następne polecenie");
-
-
-    }
-
-    public void trainAddCarInterface() {
-        boolean addCarSucces = false;
-
-        while (!addCarSucces) {
-            chooseCar();
-            String prevHomeStation = railSystem.cars.get(operationalCarName).getHomeStation();
-            try {
-                railSystem.cars.get(operationalCarName).setHomeStation("");
-                railSystem.cars.get(operationalCarName).setTrainKey(operationalTrainKey);
-                railSystem.trains.get(operationalTrainKey).carsNames.add(operationalCarName);
-                validateTrain();
-                trainLoadCarInterface();
-                validateTrain();
-                addCarSucces = true;
-            } catch (TrainValidationException e) {
-                railSystem.cars.get(operationalCarName).setHomeStation(prevHomeStation);
-                railSystem.cars.get(operationalCarName).setTrainKey("");
-                railSystem.trains.get(operationalTrainKey).carsNames.remove(operationalCarName);
-                System.out.println("Błąd: " + e.getMessage());
-            }
-        }
-        System.out.println("Chcesz dodać jeszcze jeden wagon do tego pociągu?");
-        System.out.println("Wpisz t jeśli tak lub n jeśli nie");
-
-        boolean addMoreSucces = false;
-        while (!addMoreSucces) {
-            String addMore = sc.nextLine();
-            if (addMore.length() > 1 || addMore.length() < 1)
-                System.out.println("Nie wygłupiaj się wpisz t lub n");
-            else {
-                if (addMore.equals("t")) {
-                    addMoreSucces = true;
-                    trainAddCarInterface();
-                } else if (addMore.equals("n")) {
-                    addMoreSucces = true;
-                } else {
-                    System.out.println("Nie wygłupiaj się wpisz t lub n");
-                }
-            }
-        }
-    }
-    public void trainLoadCarInterface(){
-        System.out.println("Dodajmy teraz ładunek do wagonu");
-        boolean currentCarIsCargo = railSystem.cars.get(operationalCarName).isCargo();
-
-        if (currentCarIsCargo){
-            System.out.println("To jest wagon ciężarowy, podaj masę ładunku w tonach");
-            boolean addWeightSucces = false;
-            while (!addWeightSucces){
-             String weight = sc.nextLine();
-             if (weight.length() <= 2 && weight.matches("\\d+") ){
-                 if (weight.equals(0)){
-                     System.out.println("Rozumiem ten wagon ma jechcać bez ładunku");
-                 }
-                 try {
-                     railSystem.cars.get(operationalCarName).incGrossWeight(Integer.parseInt(weight));
-                     validateTrain();
-                     addWeightSucces = true;
-                     System.out.println("Sukces");
-                 } catch (TrainValidationException e) {
-                     int carNetWeight = railSystem.cars.get(operationalCarName).getNetWeight();
-                     railSystem.cars.get(operationalCarName).setGrossWeight(carNetWeight);
-                     System.out.println("Błąd: " + e.getMessage());
-                 }
-             }else {
-                 System.out.println("Masa ładunku może być maksymalnie 2 cyfrowa i nie może zawierać innyc znaków");
-             }
-
-            }
-        }else {
-            System.out.println("To jest wagon osobowy");
-            System.out.println("W przypadku przewozu osób na pokładzie można przyjąć następujące założenie: ");
-            System.out.println("Średnio ładunek wagonu pasażerskiego przy zajętych wszystkich miesjcach " +
-                    "wynosi 10 ton (uwzględniająć bagaże podrózujących osób) ");
-            boolean addWeightSucces = false;
-            while (!addWeightSucces){
-                System.out.println("Podaj masę ładunku w tonach");
-                String weight = sc.nextLine();
-                if (weight.length() <= 2 && weight.matches("\\d+") ){
-                    if (weight.equals(0)){
-                        System.out.println("Rozumiem ten wagon ma jechcać bez ładunku");
-                    }
-                    try {
-                        railSystem.cars.get(operationalCarName).incGrossWeight(Integer.parseInt(weight));
-                        validateTrain();
-                        addWeightSucces = true;
-                        System.out.println("Sukces");
-                    } catch (TrainValidationException e) {
-                        int carNetWeight = railSystem.cars.get(operationalCarName).getNetWeight();
-                        railSystem.cars.get(operationalCarName).setGrossWeight(carNetWeight);
-                        System.out.println("Błąd: " + e.getMessage());
-                    }
-                }else {
-                    System.out.println("Masa ładunku może być maksymalnie 2 cyfrowa i nie może zawierać innyc znaków");
-                }
-
-            }
-        }
-    }
-
-    public void trainKeyInterface() {
-        String key = "";
-        boolean keySuccess = false;
-        // Interfejs klucza pociągu
-        System.out.println("Podaj identyfikator pociągu (klucz)");
-        System.out.println();
-        System.out.println("""
-                Przykład:
-                Cargo train: CT 0001 - (pociąg ciężarowy)
-                Passenger train: PT 0001 - (pociąg osobowy)
-                                
-                Uwaga! Pierwsze 2 litery są bardzo ważne od nich zależy jakiego typu będzie to pociąg.
-                Bagaż i pocztę można przewozić tylko pociągami osobowymi""");
-
-        while (!keySuccess) {
-            //tymczasowa lista nazw pociągów
-            List<String> trainKeys = new ArrayList<>();
-            for (Map.Entry<String, Train> entry : railSystem.trains.entrySet()) {
-                trainKeys.add(entry.getKey());
-            }
-
-            key = sc.nextLine();
-            System.out.println();
-
-            // walidacja do pola key
-            if (key.length() != 7 || !key.contains(" "))
-                System.out.println("Klucz który podałeś nie jest odpowiedni, poprawny format zapisu to : PT #### lub CT ####");
-            else if (!Character.isUpperCase(key.charAt(0)) && !Character.isUpperCase(key.charAt(1))) {
-                System.out.println("Dwie pierwsze litery powinne być duże i w czytelny sposób reprezentować typ pociągu" +
-                        " na przykład PT - Passenger Train");
-            } else if (!Character.isDigit(key.charAt(3)) && !Character.isDigit(key.charAt(4))
-                    && !Character.isDigit(key.charAt(5)) && !Character.isDigit(key.charAt(6))) {
-                System.out.println("Cztery ostatnie znaki powinny być liczbami np: CT 0001");
-            } else if (key.charAt(3) == 0 && key.charAt(4) == 0
-                    && key.charAt(5) == 0 && key.charAt(6) == 0) {
-                System.out.println("Numer pociągu nie może być: 0000");
-            } else if ((key.charAt(0) != 'P' && key.charAt(1) != 'T') || (key.charAt(0) != 'C' && key.charAt(1) != 'T')) {
-                System.out.println("Pierwsze 2 litery powinne reprezentować jeden z typów pociągu, PT lub CT");
-            } else if (trainKeys.contains(key)) {
-                System.out.println("Istnieje już pociąg z takim kluczem, wymyśl nowy klucz");
-            } else {
-// Tworzymy nowy pociąg
-                railSystem.trains.put(key, new Train(key));
-                if (key.charAt(0) == 'C') {
-                    operationalCarIsCargo = true;
-                } else if (key.charAt(0) == 'P') {
-                    operationalCarIsCargo = false;
-                }
-                keySuccess = true;
-                operationalTrainKey = key;
-                System.out.println("Udało się stworzyłeś pociąg");
-            }
-        }
-    }
-
-    void validateTrain() throws TrainValidationException {
-
-        long carsNumber = railSystem.trains.get(operationalTrainKey).carsNames.size();
-
-        List<Car> thisTrainElectricCars = new LinkedList<>();
-        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
-            if (entry.getValue().getTrainKey().equals(operationalTrainKey) && entry.getValue().needElectricity)
-                thisTrainElectricCars.add(entry.getValue());
-        }
-        long electricCarsNumber = thisTrainElectricCars.size();
-
-        int carsNetWeight = 0;
-        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
-            if (entry.getValue().getTrainKey().equals(operationalTrainKey)) {
-                carsNetWeight += entry.getValue().getNetWeight();
-            }
-        }
-        int carsGrossWeight = 0;
-        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
-            if (entry.getValue().getTrainKey().equals(operationalTrainKey)) {
-                carsGrossWeight += entry.getValue().getGrossWeight();
-            }
-        }
-
-        if (carsNetWeight > railSystem.locomotives.get(operationalLocomotiveName).getMaxPullWeight()) {
-            throw new TrainValidationException("Nie udało się dodać tego wagonu, przekroczono uciąg lokomotywy"
-                    + "\nMaksymalny uciąg to: " + railSystem.locomotives.get(operationalLocomotiveName).getMaxPullWeight()
-                    + " ton a z tym wagonem było by: " + carsNetWeight + " ton"
-            );
-        } else if (carsGrossWeight > railSystem.locomotives.get(operationalLocomotiveName).getMaxPullWeight()) {
-            throw new TrainValidationException("Nie udało się załadować tego wagonu, przekroczono uciąg lokomotywy"
-                    + "\nMaksymalny uciąg to: " + railSystem.locomotives.get(operationalLocomotiveName).getMaxPullWeight()
-                    + " ton a z tym ładunkiem było by: " + carsGrossWeight + " ton"
-            );
-        }else if (carsNumber > railSystem.locomotives.get(operationalLocomotiveName).getMaxCarNumber()) {
-            throw new TrainValidationException("Nie udało się dodać tego wagonu, przekroczono maksymalną ilość wagonów dla lokomotywy, czyli: "
-                    + railSystem.locomotives.get(operationalLocomotiveName).getMaxCarNumber());
-        } else if (electricCarsNumber > railSystem.locomotives.get(operationalLocomotiveName).getMaxElectricCarsNumber()) {
-            throw new TrainValidationException("Nie udało się dodać tego wagonu, przekroczono maksymalną ilość wagonów wymagających " +
-                    "podłączenia do sieci elektrycznej, czyli: " + railSystem.locomotives.get(operationalLocomotiveName).getMaxElectricCarsNumber());
-        } else System.out.println("Wagon pomyślnie dodany do składu pociągu");
-
-    }
-
-
-    public void newLocomotive() {
-        List<String> listedLocomotives = new LinkedList<>();
-        for (Map.Entry<String, Locomotive> entry : railSystem.locomotives.entrySet()) {
-            listedLocomotives.add(entry.getKey());
-        }
-        System.out.println("Teraz tworzymy Lokomotywę na stacji: " + operationalStationName);
-
-        System.out.println("Podaj nazwę dla lokomotywy");
-        String name = " ";
-        while (name.contains(" ") || name.length() < 2 || listedLocomotives.contains(name)) {
-            name = sc.nextLine();
-            if (name.contains(" ")) {
-                System.out.println("Nazwa nie może zawierać spacji");
-            }
-            if (name.length() < 2)
-                System.out.println("Nazwa powinna składać się z conajmniej dwuch znaków");
-            if (listedLocomotives.contains(name)) {
-                System.out.println("Lokomotywa o takiej nazwie już istnieje wymyśl inną nazwę");
-            }
-        }
-        // tworzenie lokomowywy
-        operationalLocomotiveName = name;
-        railSystem.locomotives.put(name, new Locomotive(name, operationalStationName));
-        System.out.println("Utworzono lokomotywę: " + operationalLocomotiveName + " na stacji: " + operationalStationName);
-
-    }
-
-    public void chooseCarType() {
-        System.out.println("Czy ten wagon ma być ciężarowy");
-        System.out.println("wpisz t jeśli tak lub n jeśli nie ");
-        boolean cargoDecSucces = false;
-        String cargoDec = "";
-
-        while (!cargoDecSucces) {
-            cargoDec = sc.nextLine();
-            if (cargoDec.equals("t")) {
-                operationalCarIsCargo = true;
-                cargoDecSucces = true;
-            } else if (cargoDec.equals("n")) {
-                operationalCarIsCargo = false;
-                cargoDecSucces = true;
-            } else {
-                System.out.println("Można wpisać tylko t lub n");
-            }
-        }
-    }
-
-    public void newCarNameInterface() {
-        List<String> listedCars = new LinkedList<>();
-        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
-            listedCars.add(entry.getKey());
-        }
-
-        System.out.println("Podaj nazwę dla wagonu");
-
-        operationalCarName = " ";
-        while (operationalCarName.contains(" ") || operationalCarName.length() < 2 || listedCars.contains(operationalCarName)) {
-            operationalCarName = sc.nextLine();
-            if (operationalCarName.contains(" ")) {
-                System.out.println("Nazwa nie może zawierać spacji");
-            }
-            if (operationalCarName.length() < 2)
-                System.out.println("Nazwa powinna składać się z conajmniej dwuch znaków");
-            if (listedCars.contains(operationalCarName)) {
-                System.out.println("Wagon o takiej nazwie już istnieje wymyśl inną nazwę");
-            }
-        }
-    }
-
+    //  Wagon /////////////////////
     public void newCar() {
         boolean carTypeSucces = false;
         newCarNameInterface();
@@ -692,14 +627,179 @@ public class Task_CLI implements Runnable {
 
     }
 
+    public void newCarNameInterface() {
+        List<String> listedCars = new LinkedList<>();
+        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
+            listedCars.add(entry.getKey());
+        }
+
+        System.out.println("Podaj nazwę dla wagonu");
+
+        operationalCarName = " ";
+        while (operationalCarName.contains(" ") || operationalCarName.length() < 2 || listedCars.contains(operationalCarName)) {
+            operationalCarName = sc.nextLine();
+            if (operationalCarName.contains(" ")) {
+                System.out.println("Nazwa nie może zawierać spacji");
+            }
+            if (operationalCarName.length() < 2)
+                System.out.println("Nazwa powinna składać się z conajmniej dwuch znaków");
+            if (listedCars.contains(operationalCarName)) {
+                System.out.println("Wagon o takiej nazwie już istnieje wymyśl inną nazwę");
+            }
+        }
+    }
+
+    public void chooseCarType() {
+        System.out.println("Czy ten wagon ma być ciężarowy");
+        System.out.println("wpisz t jeśli tak lub n jeśli nie ");
+        boolean cargoDecSucces = false;
+        String cargoDec = "";
+
+        while (!cargoDecSucces) {
+            cargoDec = sc.nextLine();
+            if (cargoDec.equals("t")) {
+                operationalCarIsCargo = true;
+                cargoDecSucces = true;
+            } else if (cargoDec.equals("n")) {
+                operationalCarIsCargo = false;
+                cargoDecSucces = true;
+            } else {
+                System.out.println("Można wpisać tylko t lub n");
+            }
+        }
+    }
+
+    public void chooseCar() {
+        boolean carDecisionSucces = false;
+        boolean ifNoCarsSucces = false;
+
+        System.out.println("Jeśli chcesz utworzyć nowy wagon to wpisz: nw ");
+        System.out.println("Jeśli chcesz wybrac wagon z listy dostępnych na tej stacji to wpisz: lw ");
+
+        while (!carDecisionSucces) {
+            boolean isTrainCargo = railSystem.trains.get(operationalTrainKey).isCargo();
+
+            String carDecision = "";
+            carDecision = sc.nextLine();
+            if (carDecision.equals("lw")) {
+                //tworzę tymczasową listę wagonów na stacji
+                List<String> listedCars = new LinkedList<>();
+                for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
+                    if (isTrainCargo && entry.getValue().getHomeStation().equals(operationalStationName) && entry.getValue().isCargo())
+                        listedCars.add(entry.getKey());
+                    if (!isTrainCargo && entry.getValue().getHomeStation().equals(operationalStationName) && !entry.getValue().isCargo())
+                        listedCars.add(entry.getKey());
+                }
+                // wyswietlam listę wagonów
+                if (listedCars.size() == 0) {
+                    System.out.println("Na tej stacji niema nieprzydzielonych wagonów");
+                    chooseCar();
+                    for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
+                        if (isTrainCargo && entry.getValue().getHomeStation().equals(operationalStationName) && entry.getValue().isCargo())
+                            listedCars.add(entry.getKey());
+                        if (!isTrainCargo && entry.getValue().getHomeStation().equals(operationalStationName) && !entry.getValue().isCargo())
+                            listedCars.add(entry.getKey());
+                    }
+                    carDecision = operationalCarName;
+                    ifNoCarsSucces = true;
+                } else {
+                    System.out.println("Lista wagonów:");
+                    for (String car : listedCars) {
+                        System.out.println(car);
+                    }
+                }
+
+                if (!ifNoCarsSucces) {
+                    System.out.println("Wpisz albo skopiuj nazwę wagonu który chcesz dodać do pociągu");
+                    // walidacja nazwy wagonu
+                    while (!listedCars.contains(carDecision)) {
+                        carDecision = sc.nextLine();
+                        if (!listedCars.contains(carDecision)) {
+                            System.out.println("Wybrany przez ciebie wagon nie istnieje");
+                        }
+                    }
+                }
+                // sukces:
+                if (listedCars.contains(carDecision)) {
+                    carDecisionSucces = true;
+                    operationalCarName = carDecision;
+                }
+
+            } else if (carDecision.equals("nw")) {
+                System.out.println("Tworzymy nowy wagon");
+                newCar();
+                carDecisionSucces = true;
+            } else {
+                System.out.println("poprawny zapis to 2 małe litery lw lub nw, popraw bład");
+            }
+
+        }
+    }
+
+
     public void test() {
-        railSystem.stations.put("NAZAR", new Station("NAZAR"));
-        railSystem.cars.put("wPasanger", new PassengerCar("NAZAR"));
-        railSystem.cars.put("wPost", new PostCar("NAZAR"));
-        railSystem.cars.put("wCargo", new BasicCargoCar("NAZAR"));
-        railSystem.cars.put("wCargo2", new BasicCargoCar("NAZAR"));
-        railSystem.locomotives.put("l1", new Locomotive("l1", "NAZAR"));
-        railSystem.locomotives.put("l2", new Locomotive("l2", "NAZAR"));
+
+        int stationsSize = railSystem.stations.size();
+        System.out.println(stationsSize);
+        int pTrainNumber = 1;
+        int cTrainNumber = 1;
+        int locoNumber = 1;
+        int carNumber = 1;
+
+        for (Map.Entry<String, Station> entry : railSystem.stations.entrySet()) {
+            System.out.println(entry.getKey());
+            // tworzę 2 pociągi na każdej stacji 1 osobowe i 1 ciężarowy
+            for (int i = 0; i < 2; i++) {
+                // Passenger train
+                String ptTrainName = "PT 000" + (pTrainNumber++);
+                railSystem.trains.put(ptTrainName, new Train(ptTrainName));
+                railSystem.trains.get(ptTrainName).setHomeStationName(entry.getKey());
+                String ptLocoName = "l" + (locoNumber++);
+                railSystem.locomotives.put(ptLocoName, new Locomotive(ptLocoName, entry.getKey()));
+                railSystem.trains.get(ptTrainName).setlocomotiveName(ptLocoName);
+                // do każdego pociągu 5 wagonów
+                for (int j = 0; j < 5; j++) {
+                    String pCarName = "c" + (carNumber++);
+                    railSystem.cars.put(pCarName, new PassengerCar(entry.getKey()));
+                    railSystem.cars.get(pCarName).setHomeStation(entry.getKey());
+                    railSystem.cars.get(pCarName).setTrainKey(ptTrainName);
+                    railSystem.trains.get(ptTrainName).carsNames.add(pCarName);
+
+                }
+                // Cargo train
+                String ctTrainName = "CT 000" + (cTrainNumber++);
+                railSystem.trains.put(ctTrainName, new Train(ctTrainName));
+                railSystem.trains.get(ctTrainName).setHomeStationName(entry.getKey());
+                String ctLocoName = "l" + (locoNumber++);
+                railSystem.locomotives.put(ctLocoName, new Locomotive(ctLocoName, entry.getKey()));
+                railSystem.trains.get(ctTrainName).setlocomotiveName(ctLocoName);
+                // do każdego pociągu 5 wagonów
+                for (int j = 0; j < 5; j++) {
+                    String cCarName = "c" + (carNumber++);
+                    railSystem.cars.put(cCarName, new PassengerCar(entry.getKey()));
+                    railSystem.cars.get(cCarName).setHomeStation(entry.getKey());
+                    railSystem.cars.get(cCarName).setTrainKey(ctTrainName);
+                    railSystem.trains.get(ctTrainName).carsNames.add(cCarName);
+
+                }
+
+            }
+        }
+    }
+
+}
+
+
+
+
+//
+//
+//        railSystem.cars.put("wPost", new PostCar("NAZAR"));
+//        railSystem.cars.put("wCargo", new BasicCargoCar("NAZAR"));
+//        railSystem.cars.put("wCargo2", new BasicCargoCar("NAZAR"));
+//        railSystem.locomotives.put("l1", new Locomotive("l1", "NAZAR"));
+//        railSystem.locomotives.put("l2", new Locomotive("l2", "NAZAR"));
+//
 
 
 //        LuggagePostCar wagonBagazowoPocztowy1 = new LuggagePostCar();
@@ -715,10 +815,10 @@ public class Task_CLI implements Runnable {
 //        addCar(wagonPocztowy1);
 //        addCar(wagonRestauracyjny1);
 //        addCar(prostyCiezarowyWagon);
-    }
+//        railSystem.stations.put("NAZAR", new Station("NAZAR"));
+//
 
 
-}
 
 
 
