@@ -6,6 +6,7 @@ public class PassengerCar extends Car {
         this.type = "PassengerCar";
         this.id = this.hashCode();
         this.netWeight = 30;
+        this.grossWeight = this.netWeight;
         this.needElectricity = true;
         this.isCargo = false;
     }

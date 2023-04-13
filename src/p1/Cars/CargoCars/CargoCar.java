@@ -10,7 +10,7 @@ public abstract class CargoCar extends Car {
         this.netWeight = 20;
         this.needElectricity = false;
         this.isCargo = true;
-
+        this.grossWeight = this.netWeight;
     }
 
 

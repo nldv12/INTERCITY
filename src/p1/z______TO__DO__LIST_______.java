@@ -2,17 +2,12 @@ package p1;
 
 public class z______TO__DO__LIST_______ {
     /*
- 
-
-
-
 
     // nowy task pojizd jide po linii
 
     ---- Generowanie raportu pociągu w CLI
     ---- załadowanie osób/ładunku do wagonów w CLI
     ---- Tworzenie nowego Path w CLI
-    ---- Tworzenie nowego Line w CLI
     ---- Tworzenie nowego Wagonu w stacji w CLI
 
     ----Train porusza się po ustalonej trasie (wskazanej obiektem stacji startowej i docelowej).

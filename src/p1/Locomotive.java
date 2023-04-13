@@ -75,7 +75,7 @@ public class Locomotive {
         return 20;
     }
     public int getMaxPullWeight() {
-        return 1000;
+        return 100;
     }
     public int getMaxElectricCarsNumber() {
         return 10;
