@@ -7,6 +7,8 @@ public class BasicCargoCar extends CargoCar {
         this.id = this.hashCode();
         this.netWeight = 20;
         this.needElectricity = false;
+        this.isCargo = true;
+
     }
 
 

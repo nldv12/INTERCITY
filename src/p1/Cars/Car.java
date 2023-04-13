@@ -10,14 +10,14 @@ public abstract class Car {
         this.homeStation = homeStation;
     }
     String type;
-    String homeStation;
+    String homeStation = "";
     protected boolean isCargo;
     protected int netWeight;
     int grossWeight;
     public boolean needElectricity;
     public int id;
     String zabezpieczenia;
-    protected String trainKey;
+    protected String trainKey = "";
     boolean isEmpty;
 
     String locomotive;
@@ -38,7 +38,7 @@ public abstract class Car {
     }
 
 
-    public boolean getIsCargo() {
+    public boolean isCargo() {
         return isCargo;
     }
 

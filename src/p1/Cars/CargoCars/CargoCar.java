@@ -9,6 +9,8 @@ public abstract class CargoCar extends Car {
         this.id = this.hashCode();
         this.netWeight = 20;
         this.needElectricity = false;
+        this.isCargo = true;
+
     }
 
 

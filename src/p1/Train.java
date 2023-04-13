@@ -10,8 +10,10 @@ import java.util.List;
 public class Train {
     public Train(String key) {
         this.key = key;
-    }
+        this.isCargo = key.contains("CT");
 
+    }
+    private boolean isCargo;
     double position;
     String key;
     private String locomotiveName;
@@ -41,5 +43,9 @@ public class Train {
 
     public String getLocomotiveName() {
         return locomotiveName;
+    }
+
+    public boolean isCargo() {
+        return isCargo;
     }
 }

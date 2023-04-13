@@ -7,6 +7,7 @@ public class RestaurantCar extends Car {
         this.id = this.hashCode();
         this.netWeight = 35;
         this.needElectricity = true;
+        this.isCargo = false;
     }
 
 

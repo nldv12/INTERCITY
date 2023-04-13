@@ -3,9 +3,7 @@ package p1;
 public class z______TO__DO__LIST_______ {
     /*
    Питання до сергія:
-   5. Чому локомотив не пропадає яукщо я його додав СLI 176 linia
-   6.
-   7.
+   1. wyświetla się wagon pasażerski kiedy głowny jest pociąg towarowy
 
 
 

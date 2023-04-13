@@ -15,7 +15,7 @@ public class Locomotive {
 
     // kluczowe pola (treść zadania)--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    private String homeStation;
+    private String homeStation = "";
     private String sourceStation;
     private String destinationStation;
     int id;
@@ -44,7 +44,7 @@ public class Locomotive {
         this.sourceStation = sourceStation;
     }
     public void setHomeStation(String homeStation) {
-        this.sourceStation = homeStation;
+        this.homeStation = homeStation;
     }
 
 

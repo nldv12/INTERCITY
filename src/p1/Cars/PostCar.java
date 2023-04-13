@@ -7,6 +7,7 @@ public class PostCar extends Car {
         this.id = this.hashCode();
         this.netWeight = 30;
         this.needElectricity = true;
+        this.isCargo = false;
     }
 
 

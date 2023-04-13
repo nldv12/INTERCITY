@@ -7,6 +7,7 @@ public class ToxicMaterialCargoCar extends CargoCar {
         this.id = this.hashCode();
         this.netWeight = 25;
         this.needElectricity = false;
+        this.isCargo = true;
 
     }
 }
