@@ -9,52 +9,92 @@ public class RailSystem {
     public RailSystem() {
         stationsAndLinks();
     }
-    public Queue<String> alerts = new LinkedList();
-    Map<String, Station> stations = new LinkedHashMap <>();
-    Map<String, Locomotive> locomotives = new LinkedHashMap <>();
-    Map<String, Car> cars = new LinkedHashMap <>();
+
+    public Queue<String> alerts = new LinkedList<>();
+    Map<String, Station> stations = new LinkedHashMap<>();
+    Map<String, Locomotive> locomotives = new LinkedHashMap<>();
+    Map<String, Car> cars = new LinkedHashMap<>();
     Map<String, Line> lines = new LinkedHashMap<>();
 
     Map<String, Train> trains = new LinkedHashMap<>();
 
 
-
+    //    void stationsAndLinks() {
+//        // tworzę wszystkie domyślne stacje
+//        addDefaultLocations();
+//
+//        // tworze listę gdzie 1 pozycja to klucz i wartość z mapy
+//
+//        List<Map.Entry<String, Station>> stationEntries = new ArrayList<>(stations.entrySet());
+//        stationEntries.sort(Comparator.comparing(Map.Entry::getKey));        //sortowanie po nazwie
+//
+//
+//        Random random = new Random();
+//        // tworzę połaczenie między poszczególnymi stacjami
+//
+//        for (int i = 0; i < 100; i++) {
+//            // while line size < 50
+//            //zabezpieczenie żeby nie dublować takich samych połaczeń
+//            int i1 = random.nextInt(stations.size()-2+1) + 1;
+//            int i2 = random.nextInt(i1);
+//
+//            // tworzenie zapisu w mapie z połączeniem
+//            String key1 = stationEntries.get(i1).getKey();
+//            Station station1 = stationEntries.get(i1).getValue();
+//            String key2 = stationEntries.get(i2).getKey();
+//            Station station2 = stationEntries.get(i2).getValue();
+//            String key = key1 + "_" + key2;
+//            String revertedKey = key2 + "_" + key1;
+//            Line line = new Line(key1, key2);
+//            Line revertedLine = new Line(key2, key1);
+//            lines.put(key, line);
+//            lines.put(revertedKey, revertedLine);
+//        }
+//    }
     void stationsAndLinks() {
         // tworzę wszystkie domyślne stacje
         addDefaultLocations();
 
         // tworze listę gdzie 1 pozycja to klucz i wartość z mapy
-
         List<Map.Entry<String, Station>> stationEntries = new ArrayList<>(stations.entrySet());
-        stationEntries.sort(Comparator.comparing(Map.Entry::getKey));        //sortowanie po nazwie
-
+        stationEntries.sort(Comparator.comparing(Map.Entry::getKey)); //sortowanie po nazwie
 
         Random random = new Random();
-        // tworzę połaczenie między poszczególnymi stacjami
+        LinkedHashSet<String> createdConnections = new LinkedHashSet<>(); // set do przechowywania już utworzonych połączeń
 
-        for (int i = 0; i < 50; i++) {
-            // while line size < 50
-            //zabezpieczenie żeby nie dublować takich samych połaczeń
-            int i1 = random.nextInt(stations.size()-2+1) + 1;
-            int i2 = random.nextInt(i1);
+        // Tworzenie połączenia od każdej stacji
+        for (int i = 0; i < stationEntries.size(); i++) {
+            String key1 = stationEntries.get(i).getKey();
+            Station station1 = stationEntries.get(i).getValue();
 
-            // tworzenie zapisu w mapie  z połączeniem
-            String key1 = stationEntries.get(i1).getKey();
-            Station station1 = stationEntries.get(i1).getValue();
-            String key2 = stationEntries.get(i2).getKey();
-            Station station2 = stationEntries.get(i2).getValue();
+            String key2 = "";
+            Station station2;
+
+            // Szukanie innej stacji, która jeszcze nie ma połączenia z aktualną stacją
+            do {
+                int i2 = random.nextInt(stations.size());
+                if (i2 != i) {
+                    key2 = stationEntries.get(i2).getKey();
+                    station2 = stationEntries.get(i2).getValue();
+                }
+            } while (createdConnections.contains(key1 + "_" + key2)); // Sprawdzanie, czy połączenie już istnieje
+
+            // Tworzenie zapisu w mapie z połączeniem
             String key = key1 + "_" + key2;
             String revertedKey = key2 + "_" + key1;
             Line line = new Line(key1, key2);
             Line revertedLine = new Line(key2, key1);
             lines.put(key, line);
             lines.put(revertedKey, revertedLine);
+            createdConnections.add(key); // Dodanie połączenia do zbioru już utworzonych połączeń
+            createdConnections.add(revertedKey); // Dodanie połączenia do zbioru już utworzonych połączeń
         }
+
     }
 
     void showStations() {
         System.out.println("Map of stations");
-        System.out.println("Number of stations: "+ stations.size());
+        System.out.println("Number of stations: " + stations.size());
 
         for (Map.Entry<String, Station> entry : stations.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue().name);
@@ -64,7 +104,7 @@ public class RailSystem {
 
     void showLines() {
         System.out.println("Map of lines");
-        System.out.println("Number of lines: "+ lines.size());
+        System.out.println("Number of lines: " + lines.size());
 
         for (Map.Entry<String, Line> entry : lines.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue());

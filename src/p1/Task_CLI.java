@@ -25,25 +25,26 @@ public class Task_CLI implements Runnable {
 
     @Override
     public void run() {
+//        System.out.println("hi");
+        defaultRailSystemFill();
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         commandlist();
         while (true) {
-//            System.out.println("hi");
             try {
                 if (System.in.available() > 0) {
                     char c = (char) reader.read();
                     if (c == 'r') {
                         System.out.println("Wciśnąłeś r");
-                        test();
-                        getTrainReport();
+//                        getTrainReport();
                         commandlist();
                     } else if (c == 's') {
                         System.out.println("Wciśnąłeś s");
                         newStation();
                         commandlist();
                     } else if (c == 't') {
-
                         System.out.println("Wciśnąłeś t");
+                        System.out.println("Pociąg można stworzyć tylko na jakiejś stacji");
+                        chooseStation();
                         newTrain();
                         commandlist();
                     } else if (c == 'l') {
@@ -60,6 +61,10 @@ public class Task_CLI implements Runnable {
                         chooseCarType();
                         newCar();
                         System.out.println("Wagon pomyślnie utworzony");
+                        commandlist();
+                    } else if (c == 'p') {
+                        System.out.println("Wciśnąłeś p");
+                        newPath();
                         commandlist();
                     } else {
                         if (c == '\n') {// tu nic nie powinno się wyswietlić
@@ -84,11 +89,92 @@ public class Task_CLI implements Runnable {
 
     public void commandlist() {
         System.out.println("Lista poleceń:");
-        System.out.println("r - generowanie raportu dotyczącego konkretnego pociągu");
-        System.out.println("s - tworzenie nowej stacji");
-        System.out.println("t - tworzenie nowego pociągu");
-        System.out.println("l - tworzenie nowej lokomortywy");
-        System.out.println("c - tworzenie nowego wagonu");
+        System.out.println("r - (report) generowanie raportu dotyczącego konkretnego pociągu");
+        System.out.println("s - (station) tworzenie nowej stacji");
+        System.out.println("t - (train) tworzenie nowego pociągu");
+        System.out.println("l - (locomotive) tworzenie nowej lokomortywy");
+        System.out.println("c - (car) tworzenie nowego wagonu");
+        System.out.println("p - (path) planowanie trasy pociągu");
+    }
+
+    public void newPath() {
+        System.out.println("Wybierz stację od której chcesz zacząć");
+        chooseStation();
+        System.out.println("Teraz wybierz pociąg dla którego chcesz zaplanować trasę");
+        chooseTrain();
+        System.out.println("Pociąg wybrany, oto lista linii które wychodzą ze stacji: " + operationalStationName);
+        for (Map.Entry<String, Line> entry : railSystem.lines.entrySet()) {
+            if (entry.getKey().startsWith(operationalStationName))
+                System.out.println(entry.getKey());
+            if (entry.getKey().endsWith(operationalStationName))
+                System.out.println(entry.getKey());
+        }
+
+
+        System.out.println("Pociąg: " + operationalTrainKey);
+        System.out.println("Stacja: " + operationalStationName);
+
+
+    }
+
+    public void chooseTrain() {
+        boolean trainDecisionSucces = false;
+        boolean ifNoTrainSucces = false;
+
+        System.out.println("Jeśli chcesz utworzyć nowy pociąg to wpisz: nt ");
+        System.out.println("Jeśli chcesz wybrac pociąg z listy dostępnych na tej stacji to wpisz: lt ");
+
+        while (!trainDecisionSucces) {
+            String trainDecision = "";
+            trainDecision = sc.nextLine();
+            if (trainDecision.equals("lt")) {
+                //tworzę tymczasową listę pociągów na stacji
+                List<String> listedTrains = new LinkedList<>();
+                listedTrains.clear();
+                for (Map.Entry<String, Train> entry : railSystem.trains.entrySet()) {
+                    if (entry.getValue().getHomeStationName().equals(operationalStationName))
+                        listedTrains.add(entry.getKey());
+                }
+                // wyswietlam listę pociągów
+                if (listedTrains.size() == 0) {
+                    System.out.println("Na tej stacji niema pociągów ");
+                    chooseTrain();
+                    for (Map.Entry<String, Train> entry : railSystem.trains.entrySet()) {
+                        if (entry.getValue().getHomeStationName().equals(operationalStationName))
+                            listedTrains.add(entry.getKey());
+                    }
+                    trainDecision = operationalTrainKey;
+                    ifNoTrainSucces = true;
+                } else {
+                    System.out.println("Lista pociągów:");
+                    for (String train : listedTrains) {
+                        System.out.println(train);
+                    }
+                }
+                if (!ifNoTrainSucces) {
+                    System.out.println("Wpisz albo skopiuj nazwę pociągu dla którego chcesz zaplanować trasę");
+                    // walidacja nazwy pociąga
+                    while (!listedTrains.contains(trainDecision)) {
+                        trainDecision = sc.nextLine();
+                        if (!listedTrains.contains(trainDecision)) {
+                            System.out.println("Wybrany przez ciebie pociąg nie istnieje");
+                        }
+                    }
+                }
+                // sukces:
+                if (listedTrains.contains(trainDecision)) {
+                    trainDecisionSucces = true;
+                    operationalTrainKey = trainDecision;
+                }
+            } else if (trainDecision.equals("nt")) {
+                System.out.println("Tworzymy nowy pociąg");
+                newTrain();
+                trainDecisionSucces = true;
+            } else {
+                System.out.println("poprawny zapis to 2 małe litery lt lub nt, popraw bład");
+            }
+
+        }
     }
 
     //  Raport /////////////////////
@@ -216,9 +302,6 @@ public class Task_CLI implements Runnable {
 //  Pociąg /////////////////////
 
     public void newTrain() {
-        System.out.println("Pociąg można stworzyć tylko na jakiejś stacji");
-        chooseStation();
-
         System.out.println("Teraz tworzymy pociąg na stacji: " + operationalStationName);
         trainKeyInterface();
 
@@ -737,18 +820,16 @@ public class Task_CLI implements Runnable {
     }
 
 
-    public void test() {
+    public void defaultRailSystemFill() {
 
         int stationsSize = railSystem.stations.size();
-        System.out.println(stationsSize);
         int pTrainNumber = 1;
         int cTrainNumber = 1;
         int locoNumber = 1;
         int carNumber = 1;
 
         for (Map.Entry<String, Station> entry : railSystem.stations.entrySet()) {
-            System.out.println(entry.getKey());
-            // tworzę 2 pociągi na każdej stacji 1 osobowe i 1 ciężarowy
+            // tworzę 2 pociągi na każdej stacji 1 osobowy i 1 ciężarowy
             for (int i = 0; i < 2; i++) {
                 // Passenger train
                 String ptTrainName = "PT 000" + (pTrainNumber++);
@@ -788,35 +869,6 @@ public class Task_CLI implements Runnable {
     }
 
 }
-
-
-
-
-//
-//
-//        railSystem.cars.put("wPost", new PostCar("NAZAR"));
-//        railSystem.cars.put("wCargo", new BasicCargoCar("NAZAR"));
-//        railSystem.cars.put("wCargo2", new BasicCargoCar("NAZAR"));
-//        railSystem.locomotives.put("l1", new Locomotive("l1", "NAZAR"));
-//        railSystem.locomotives.put("l2", new Locomotive("l2", "NAZAR"));
-//
-
-
-//        LuggagePostCar wagonBagazowoPocztowy1 = new LuggagePostCar();
-//        PassengerCar wagonPasazerski1 = new PassengerCar();
-//        PassengerCar wagonPasazerski2 = new PassengerCar();
-//        PostCar wagonPocztowy1 = new PostCar();
-//        RestaurantCar wagonRestauracyjny1 = new RestaurantCar();
-//        BasicCargoCar prostyCiezarowyWagon = new BasicCargoCar();
-//  PT 0001
-//        addCar(wagonBagazowoPocztowy1);
-//        addCar(wagonPasazerski1);
-//        addCar(wagonPasazerski2);
-//        addCar(wagonPocztowy1);
-//        addCar(wagonRestauracyjny1);
-//        addCar(prostyCiezarowyWagon);
-//        railSystem.stations.put("NAZAR", new Station("NAZAR"));
-//
 
 
 

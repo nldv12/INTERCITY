@@ -7,6 +7,7 @@ public class z______TO__DO__LIST_______ {
 
     ---- Generowanie raportu pociągu w CLI
     ---- Tworzenie nowego Path w CLI
+    ---- Tworzenie nowego Line w CLI
 
     ----Train porusza się po ustalonej trasie (wskazanej obiektem stacji startowej i docelowej).
             Trasę pomiędzy stacjami każdorazowo należy ustalić (nie musi być to trasa najkrótsza,
@@ -62,6 +63,7 @@ mmjmj
 
     - wymyślić po 2 dodatkowe pola dla każdej klasy
     - wymyślić po 2 dodatkowe metody dla każdej klasy odpowiadające jej tematyce
+    - popraw długość nazwy pociągu przy domyślnym wypełnieniu rail system
 
 
 
