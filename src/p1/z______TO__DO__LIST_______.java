@@ -2,9 +2,7 @@ package p1;
 
 public class z______TO__DO__LIST_______ {
     /*
-   Питання до сергія:
-   1. wyświetla się wagon pasażerski kiedy głowny jest pociąg towarowy
-
+ 
 
 
 
