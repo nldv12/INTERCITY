@@ -7,7 +7,11 @@ import java.util.*;
 
 public class RailSystem {
     public RailSystem() {
+        addDefaultLocations();
+        // im więcej razy tym mniej szans na powstanie stacji z tylko 1 linią
         stationsAndLinks();
+//        stationsAndLinks();
+//        stationsAndLinks();
     }
 
     public Queue<String> alerts = new LinkedList<>();
@@ -16,51 +20,23 @@ public class RailSystem {
     Map<String, Car> cars = new LinkedHashMap<>();
     Map<String, Line> lines = new LinkedHashMap<>();
 
+    Map<String, Path> paths = new LinkedHashMap<>();
+
     Map<String, Train> trains = new LinkedHashMap<>();
 
 
-    //    void stationsAndLinks() {
-//        // tworzę wszystkie domyślne stacje
-//        addDefaultLocations();
-//
-//        // tworze listę gdzie 1 pozycja to klucz i wartość z mapy
-//
-//        List<Map.Entry<String, Station>> stationEntries = new ArrayList<>(stations.entrySet());
-//        stationEntries.sort(Comparator.comparing(Map.Entry::getKey));        //sortowanie po nazwie
-//
-//
-//        Random random = new Random();
-//        // tworzę połaczenie między poszczególnymi stacjami
-//
-//        for (int i = 0; i < 100; i++) {
-//            // while line size < 50
-//            //zabezpieczenie żeby nie dublować takich samych połaczeń
-//            int i1 = random.nextInt(stations.size()-2+1) + 1;
-//            int i2 = random.nextInt(i1);
-//
-//            // tworzenie zapisu w mapie z połączeniem
-//            String key1 = stationEntries.get(i1).getKey();
-//            Station station1 = stationEntries.get(i1).getValue();
-//            String key2 = stationEntries.get(i2).getKey();
-//            Station station2 = stationEntries.get(i2).getValue();
-//            String key = key1 + "_" + key2;
-//            String revertedKey = key2 + "_" + key1;
-//            Line line = new Line(key1, key2);
-//            Line revertedLine = new Line(key2, key1);
-//            lines.put(key, line);
-//            lines.put(revertedKey, revertedLine);
-//        }
-//    }
+
     void stationsAndLinks() {
         // tworzę wszystkie domyślne stacje
-        addDefaultLocations();
 
         // tworze listę gdzie 1 pozycja to klucz i wartość z mapy
+
         List<Map.Entry<String, Station>> stationEntries = new ArrayList<>(stations.entrySet());
         stationEntries.sort(Comparator.comparing(Map.Entry::getKey)); //sortowanie po nazwie
 
         Random random = new Random();
-        LinkedHashSet<String> createdConnections = new LinkedHashSet<>(); // set do przechowywania już utworzonych połączeń
+        Set<String> createdConnections = new LinkedHashSet<>(); // set do przechowywania już utworzonych połączeń
+
 
         // Tworzenie połączenia od każdej stacji
         for (int i = 0; i < stationEntries.size(); i++) {
@@ -72,12 +48,12 @@ public class RailSystem {
 
             // Szukanie innej stacji, która jeszcze nie ma połączenia z aktualną stacją
             do {
-                int i2 = random.nextInt(stations.size());
+                int i2 = random.nextInt(stations.size()-1) +1;
                 if (i2 != i) {
                     key2 = stationEntries.get(i2).getKey();
                     station2 = stationEntries.get(i2).getValue();
                 }
-            } while (createdConnections.contains(key1 + "_" + key2)); // Sprawdzanie, czy połączenie już istnieje
+            } while (createdConnections.contains(key1 + "_" + key2)||key2.equals("")); // Sprawdzanie, czy połączenie już istnieje
 
             // Tworzenie zapisu w mapie z połączeniem
             String key = key1 + "_" + key2;
@@ -89,6 +65,30 @@ public class RailSystem {
             createdConnections.add(key); // Dodanie połączenia do zbioru już utworzonych połączeń
             createdConnections.add(revertedKey); // Dodanie połączenia do zbioru już utworzonych połączeń
         }
+
+
+        /// sprawdzenie jak to działa
+        List<String> myStations = new LinkedList<>();
+        LinkedHashSet<String> myHashSet = new LinkedHashSet<>(); // set do przechowywania już utworzonych połączeń
+
+        for (Map.Entry<String, Station> entry : this.stations.entrySet()) {
+            myStations.add(entry.getKey());
+            for (String line : createdConnections) {
+                if (line.startsWith(entry.getKey())){
+                    myHashSet.add(entry.getKey());
+                }
+
+            }
+        }
+
+//        for (String line : createdConnections) {
+//            System.out.println(line);
+//        }
+//        System.out.println("Liczba lini w hash secie połączeń : " + createdConnections.size());
+//        System.out.println("Liczba stacji : " + myStations.size());
+//        System.out.println("Liczba stacji które mają min 1 linie  : " + myHashSet.size());
+
+
 
     }
 
@@ -146,15 +146,15 @@ public class RailSystem {
                 "READING",
                 "LEICESTER",
                 "COVENTRY",
-                "STOKE_ON_TRENT",
+                "STOKE",
                 "WOLVERHAMPTON",
                 "DERBY",
                 "BLACKPOOL",
                 "IPSWICH",
                 "NORWICH",
                 "BOURNEMOUTH",
-                "SOUTHEND_ON_SEA",
-                "MILTON_KEYNES",
+                "SOUTHEND",
+                "MILTON",
                 "NORTHAMPTON",
                 "PETERBOROUGH",
                 "LINCOLN",
@@ -164,14 +164,14 @@ public class RailSystem {
                 "ROTHERHAM",
                 "DONCASTER",
                 "BARNSLEY",
-                "STOCKTON_ON_TEES",
+                "STOCKTON",
                 "SUNDERLAND",
                 "WIGAN",
                 "OLDHAM",
                 "ROCHDALE",
                 "BOLTON",
                 "WARRINGTON",
-                "ST_HELENS",
+                "STHELENS",
                 "HALIFAX",
                 "HUDDERSFIELD",
                 "BLACKBURN",
@@ -179,24 +179,24 @@ public class RailSystem {
                 "PRESTON",
                 "CHORLEY",
                 "WIDNES",
-                "LYTHAM_ST_ANNES",
+                "LYTHAM",
                 "FLEETWOOD",
-                "POULTON_LE_FYLDE",
+                "POULTON",
                 "GARSTANG",
                 "LONGRIDGE",
                 "ORMSKIRK",
                 "SKELMERSDALE",
                 "LANCASHIRE",
-                "RIBBLE_VALLEY",
+                "RIBBLE",
                 "CLITHEROE",
                 "PREESALL",
                 "KIRKHAM",
-                "THORNTON_CLEVELEYS",
+                "THORNTON",
                 "BISPHAM",
-                "KIRKBY_LONSDALE",
+                "KIRKBY",
                 "ULVERSTON",
                 "KENDAL",
-                "GRANGE_OVER_SANDS",
+                "GRANGE",
                 "MILNTHORPE",
                 "KESWICK",
                 "COCKERMOUTH",
@@ -208,7 +208,7 @@ public class RailSystem {
                 "MORPETH",
                 "BLYTH",
                 "BEDLINGTON",
-                "NEWBIGGIN_BY_THE_SEA",
+                "NEWBIGGIN",
                 "CRESSWELL",
                 "AMBLE",
                 "NORTHUMBERLAND",
@@ -220,8 +220,8 @@ public class RailSystem {
                 "GUISBOROUGH",
                 "HARROGATE",
                 "DARLINGTON",
-                "HEBDEN_BRIDGE",
-                "SOWERBY_BRIDGE",
+                "HEBDEN",
+                "SOWERBY",
                 "HOLMFIRTH",
                 "TODMORDEN",
                 "RIPPONDEN",

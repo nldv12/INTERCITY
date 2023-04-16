@@ -3,11 +3,9 @@ package p1;
 public class z______TO__DO__LIST_______ {
     /*
 
-    // nowy task pojizd jide po linii
+    żeby linie nie prowadziły wstecz przy tworzeniu nowej linii
 
-    ---- Generowanie raportu pociągu w CLI
-    ---- Tworzenie nowego Path w CLI
-    ---- Tworzenie nowego Line w CLI
+    // nowy task pojizd jide po linii
 
     ----Train porusza się po ustalonej trasie (wskazanej obiektem stacji startowej i docelowej).
             Trasę pomiędzy stacjami każdorazowo należy ustalić (nie musi być to trasa najkrótsza,
@@ -63,7 +61,8 @@ mmjmj
 
     - wymyślić po 2 dodatkowe pola dla każdej klasy
     - wymyślić po 2 dodatkowe metody dla każdej klasy odpowiadające jej tematyce
-    - popraw długość nazwy pociągu przy domyślnym wypełnieniu rail system
+    - można by zrobić tak żeby podczas tworzenia pociągu można było zaplanować dla niego trasę
+    - można by zrobić wyświetlenie tras, linii, pociągów itp.. jako odzielne menu
 
 
 
