@@ -20,6 +20,8 @@ public class Locomotive {
     private String destinationStation;
     int id;
     static int currentSpeed = 100;
+    private String pathKey;
+
 
     static void speedUp(int value){
         currentSpeed = value;
@@ -39,25 +41,11 @@ public class Locomotive {
         }
     }
 
-    // Setters --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public void setSourceStation(String sourceStation) {
-        this.sourceStation = sourceStation;
-    }
-    public void setHomeStation(String homeStation) {
-        this.homeStation = homeStation;
-    }
-
-
-    public void setDestinationStation(String destinationStation) {
-        this.destinationStation = destinationStation;
-    }
-
 
     // Getters ------------------------------------------------------------------------------------------------------------------------------------
     public String getName() {
         return name;
     }
-
     public String getSourceStation() {
         return sourceStation;
     }
@@ -74,11 +62,29 @@ public class Locomotive {
     public int getMaxCarNumber() {
         return 20;
     }
+
     public int getMaxPullWeight() {
         return 100;
     }
     public int getMaxElectricCarsNumber() {
         return 10;
+    }
+    public String getPathKey() {
+        return pathKey;
+    }
+
+    // Setters --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    public void setSourceStation(String sourceStation) {
+        this.sourceStation = sourceStation;
+    }
+    public void setHomeStation(String homeStation) {
+        this.homeStation = homeStation;
+    }
+    public void setDestinationStation(String destinationStation) {
+        this.destinationStation = destinationStation;
+    }
+    public void setPathKey(String pathKey) {
+        this.pathKey = pathKey;
     }
 
 

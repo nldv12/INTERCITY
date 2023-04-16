@@ -33,8 +33,8 @@ public class Task_CLI implements Runnable {
 
     @Override
     public void run() {
-//        System.out.println("hi");
         defaultRailSystemFill();
+        System.out.println("hi");
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         commandlist();
         while (true) {
@@ -948,10 +948,12 @@ public class Task_CLI implements Runnable {
         // stacja końcowa lokomotywy - ustalamy
         railSystem.locomotives.get(oplLocomotiveName).setDestinationStation(opStationName);
         String pathKey = opSourceStation + "__" + opStationName;
+        railSystem.locomotives.get(oplLocomotiveName).setPathKey(pathKey);
         opPathKey = pathKey;
         // tworzymy obiekt path
         railSystem.paths.put(pathKey, new Path(pathKey, opPathLines));
         railSystem.paths.get(pathKey).trainsKeys.add(opTrainKey);
+
     }
 
     public void reversePath() {
@@ -1021,21 +1023,51 @@ public class Task_CLI implements Runnable {
         int locoNumber = 1;
         int carNumber = 1;
 
-        for (Map.Entry<String, Station> entry : railSystem.stations.entrySet()) {
+        for (Map.Entry<String, Station> stationEntry : railSystem.stations.entrySet()) {
             // tworzę 2 pociągi na każdej stacji 1 osobowy i 1 ciężarowy
             for (int i = 0; i < 2; i++) {
+                // lista wszystkich linii
+                LinkedList<String> allLines = new LinkedList<>();
+                for (Map.Entry<String, Line> line : railSystem.lines.entrySet()) {
+                    allLines.add(line.getKey());
+                }
+                // projektowanie Path dla pociągu (taka sama dla pasażerskiego i ciężarowego)
+                LinkedList<String> thisPath = new LinkedList<>();
+                String startStration = stationEntry.getKey();
+                String prevStration = stationEntry.getKey();
+                for (int j = 0; j <5; j++) {
+                    for (String line : allLines) {
+                        if (line.startsWith(startStration) && !line.endsWith(prevStration)){
+                            thisPath.add(line);
+                            String[] cities = line.split("_");
+                            startStration = cities[1];
+                            prevStration = cities[0];
+                            break;
+                        }
+                    }
+                }
+
+                String pathKey = stationEntry.getKey() + "__" + startStration;
+                railSystem.paths.put(pathKey, new Path(pathKey, thisPath));
+
+
                 // Passenger train
                 String ptTrainName = "PT_000" + (pTrainNumber++);
                 railSystem.trains.put(ptTrainName, new Train(ptTrainName));
-                railSystem.trains.get(ptTrainName).setHomeStationName(entry.getKey());
+                railSystem.trains.get(ptTrainName).setHomeStationName(stationEntry.getKey());
                 String ptLocoName = "l" + (locoNumber++);
-                railSystem.locomotives.put(ptLocoName, new Locomotive(ptLocoName, entry.getKey()));
+                railSystem.locomotives.put(ptLocoName, new Locomotive(ptLocoName, stationEntry.getKey()));
                 railSystem.trains.get(ptTrainName).setlocomotiveName(ptLocoName);
+                // do każdego pociągu 1 trasa
+                railSystem.locomotives.get(ptLocoName).setSourceStation(stationEntry.getKey());
+                railSystem.locomotives.get(ptLocoName).setDestinationStation(startStration);
+                railSystem.locomotives.get(ptLocoName).setPathKey(pathKey);
+                railSystem.paths.get(pathKey).trainsKeys.add(ptTrainName);
                 // do każdego pociągu 5 wagonów
                 for (int j = 0; j < 5; j++) {
                     String pCarName = "c" + (carNumber++);
-                    railSystem.cars.put(pCarName, new PassengerCar(entry.getKey()));
-                    railSystem.cars.get(pCarName).setHomeStation(entry.getKey());
+                    railSystem.cars.put(pCarName, new PassengerCar(stationEntry.getKey()));
+                    railSystem.cars.get(pCarName).setHomeStation(stationEntry.getKey());
                     railSystem.cars.get(pCarName).setTrainKey(ptTrainName);
                     railSystem.trains.get(ptTrainName).carsNames.add(pCarName);
 
@@ -1043,15 +1075,20 @@ public class Task_CLI implements Runnable {
                 // Cargo train
                 String ctTrainName = "CT_000" + (cTrainNumber++);
                 railSystem.trains.put(ctTrainName, new Train(ctTrainName));
-                railSystem.trains.get(ctTrainName).setHomeStationName(entry.getKey());
+                railSystem.trains.get(ctTrainName).setHomeStationName(stationEntry.getKey());
                 String ctLocoName = "l" + (locoNumber++);
-                railSystem.locomotives.put(ctLocoName, new Locomotive(ctLocoName, entry.getKey()));
+                railSystem.locomotives.put(ctLocoName, new Locomotive(ctLocoName, stationEntry.getKey()));
                 railSystem.trains.get(ctTrainName).setlocomotiveName(ctLocoName);
+                // do każdego pociągu 1 trasa
+                railSystem.locomotives.get(ctLocoName).setSourceStation(stationEntry.getKey());
+                railSystem.locomotives.get(ctLocoName).setDestinationStation(startStration);
+                railSystem.locomotives.get(ctLocoName).setPathKey(pathKey);
+                railSystem.paths.get(pathKey).trainsKeys.add(ctTrainName);
                 // do każdego pociągu 5 wagonów
                 for (int j = 0; j < 5; j++) {
                     String cCarName = "c" + (carNumber++);
-                    railSystem.cars.put(cCarName, new PassengerCar(entry.getKey()));
-                    railSystem.cars.get(cCarName).setHomeStation(entry.getKey());
+                    railSystem.cars.put(cCarName, new PassengerCar(stationEntry.getKey()));
+                    railSystem.cars.get(cCarName).setHomeStation(stationEntry.getKey());
                     railSystem.cars.get(cCarName).setTrainKey(ctTrainName);
                     railSystem.trains.get(ctTrainName).carsNames.add(cCarName);
 
@@ -1061,23 +1098,10 @@ public class Task_CLI implements Runnable {
         }
     }
 
+
+
+
 }
-
-
-// trasa zatoczyła koło
-//            if (opStationName.equals(opSourceStation)) {
-//                System.out.println("Została wybrana linia która doprawadziła cię do stacji początkowej");
-//                // stacja końcowa lokomotywy - ustalamy
-//                railSystem.locomotives.get(oplLocomotiveName).setDestinationStation(opStationName);
-//                String pathKey = opSourceStation + "__" + opStationName;
-//                // tworzymy obiekt path
-//                railSystem.paths.put(pathKey, new Path(pathKey, opPathLines));
-//                railSystem.paths.get(pathKey).trainsKeys.add(opTrainKey);
-//                stopAddingLines = true;
-//                System.out.println("Trasa zatoczyła koło, kończymy dodawanie trasy");
-//            } else {
-
-
 
 
 

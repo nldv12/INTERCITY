@@ -3,7 +3,6 @@ package p1;
 public class z______TO__DO__LIST_______ {
     /*
 
-    żeby linie nie prowadziły wstecz przy tworzeniu nowej linii
 
     // nowy task pojizd jide po linii
 

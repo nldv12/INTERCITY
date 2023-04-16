@@ -20,7 +20,7 @@ public class Train {
     private String homeStationName;
     private String locomotiveName;
     List<String> carsNames = new LinkedList<>();
-    Path path;
+
 
     void showCars() {
         for (String car : carsNames) {
@@ -57,4 +57,6 @@ public class Train {
                 + this.carsNames.size()
                 + "stacja macierzysta: "+ this.homeStationName;
     }
+
+
 }

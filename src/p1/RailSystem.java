@@ -10,8 +10,9 @@ public class RailSystem {
         addDefaultLocations();
         // im więcej razy tym mniej szans na powstanie stacji z tylko 1 linią
         stationsAndLinks();
-//        stationsAndLinks();
-//        stationsAndLinks();
+        stationsAndLinks();
+        stationsAndLinks();
+        stationsAndLinks();
     }
 
     public Queue<String> alerts = new LinkedList<>();
@@ -95,7 +96,6 @@ public class RailSystem {
     void showStations() {
         System.out.println("Map of stations");
         System.out.println("Number of stations: " + stations.size());
-
         for (Map.Entry<String, Station> entry : stations.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue().name);
         }
@@ -105,7 +105,6 @@ public class RailSystem {
     void showLines() {
         System.out.println("Map of lines");
         System.out.println("Number of lines: " + lines.size());
-
         for (Map.Entry<String, Line> entry : lines.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue());
 //            System.out.println(entry.getKey() + " - " + entry.getValue().station1Key+ " " + entry.getValue().station2Key);
