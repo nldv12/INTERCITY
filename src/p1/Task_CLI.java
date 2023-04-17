@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Task_CLI implements Runnable {
-    RailSystem railSystem;
+    RailSystem railSystem = RailSystem.getRailSystem();
 
     String opStationName = "";
     String opPreviousStationName = " ";
@@ -23,18 +23,13 @@ public class Task_CLI implements Runnable {
     LinkedList<String> opPathLines = new LinkedList<>();
     String opPathKey = "";
 
-    boolean stopAddingLines = false;
-
 
     public Task_CLI(RailSystem railSystem) {
         this.railSystem = railSystem;
     }
 
-
     @Override
     public void run() {
-        defaultRailSystemFill();
-        System.out.println("hi");
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         commandlist();
         while (true) {
@@ -80,6 +75,10 @@ public class Task_CLI implements Runnable {
                         chooseStation();
                         newPath();
                         commandlist();
+                    } else if (c == 'd') {
+                        System.out.println("Wciśnąłeś d");
+                        remove();
+                        commandlist();
                     } else {
                         if (c == '\n') {// tu nic nie powinno się wyswietlić
                         } else System.out.println("Niema takiego polecenia");
@@ -110,6 +109,7 @@ public class Task_CLI implements Runnable {
         System.out.println("c - (car) tworzenie nowego wagonu");
         System.out.println("p - (path) planowanie trasy pociągu");
         System.out.println("j - (join) tworzenie nowego połączenia między dwoma stacjami");
+        System.out.println("d - (delete) usuwanie obiektów");
     }
 
     //  Raport (Report) /////////////////////
@@ -137,15 +137,18 @@ public class Task_CLI implements Runnable {
             }
         }
 
-        String lokomotywa = railSystem.trains.get(train).getLocomotiveName();
-        int iloscWagonow = railSystem.trains.get(train).carsNames.size();
-        String stacjaMacierzysta = railSystem.trains.get(train).getHomeStationName();
+        String locomotive = railSystem.trains.get(train).getLocomotiveName();
+        int carsCount = railSystem.trains.get(train).carsNames.size();
+        double distancePassedPercantageTotal = railSystem.locomotives.get(locomotive).getDistancePassedPercantageTotal();
+        String homeStationName = railSystem.trains.get(train).getHomeStationName();
 
 
         System.out.println("Wybrałeś pociąg: " + train);
-        System.out.println("Lokomotywa: " + lokomotywa);
-        System.out.println("Ilość wagonów: " + iloscWagonow);
-        System.out.println("Stacja macierzysta: " + stacjaMacierzysta);
+        System.out.println("Pociąg pokonał: " + distancePassedPercantageTotal + " procent całej trasy");
+//        System.out.println("Najbliższa stacja: " + nextStation );
+        System.out.println("Lokomotywa: " + locomotive);
+        System.out.println("Ilość wagonów: " + carsCount);
+        System.out.println("Stacja macierzysta: " + homeStationName);
         System.out.println("Wagony:");
         railSystem.trains.get(train).showCars();
 
@@ -243,7 +246,7 @@ public class Task_CLI implements Runnable {
         chooseLocomotive();
         railSystem.trains.get(opTrainKey).setlocomotiveName(oplLocomotiveName);
         railSystem.locomotives.get(oplLocomotiveName).setHomeStation("");
-
+        railSystem.locomotives.get(oplLocomotiveName).setTrainKey(opTrainKey);
 
         System.out.println("To teraz dodajemy wagony do lokomotywy: "
                 + oplLocomotiveName + " na stacji: " + opStationName);
@@ -818,7 +821,7 @@ public class Task_CLI implements Runnable {
 
     //  Trasa (Path) /////////////////////
     public void newPath() {
-
+        boolean stopAddingLines = false;
         System.out.println("Wybierz stację od której chcesz zacząć");
         chooseStation();
 
@@ -953,6 +956,13 @@ public class Task_CLI implements Runnable {
         // tworzymy obiekt path
         railSystem.paths.put(pathKey, new Path(pathKey, opPathLines));
         railSystem.paths.get(pathKey).trainsKeys.add(opTrainKey);
+        int distance = 0;
+        for (Map.Entry<String, Line> line : railSystem.lines.entrySet()) {
+            if (opPathLines.contains(line.getKey())) {
+                distance += line.getValue().getDistance();
+            }
+        }
+        railSystem.paths.get(pathKey).setTotalPathDistance(distance);
 
     }
 
@@ -1008,97 +1018,362 @@ public class Task_CLI implements Runnable {
             }
         }
         String newLineKey = startStation + "_" + endStation;
+
+        System.out.println("Podaj teraz ile wynosi dystans w km pomiędzy tymi stacjami");
+        System.out.println("podaj liczbę od 10 do 100 włącznie");
+        boolean distanceSucces = false;
+        String dec;
+        int distance = 10;
+        while (!distanceSucces) {
+            dec = sc.nextLine();
+            boolean isDigit = true;
+            for (char c : dec.toCharArray()) {
+                if (!Character.isDigit(c)) {
+                    isDigit = false;
+                }
+            }
+            if (isDigit) {
+                if (Integer.parseInt(dec) > 9 && Integer.parseInt(dec) < 101) {
+                    distance = Integer.parseInt(dec);
+                    distanceSucces = true;
+                    System.out.println("Dystans dodany");
+                } else {
+                    System.out.println("Błąd, liczba przekracza ustalony zakres");
+                }
+            } else {
+                System.out.println("Bład, podaj poprawną wartość");
+            }
+        }
         railSystem.lines.put(newLineKey, new Line(startStation, endStation));
+        railSystem.lines.get(newLineKey).setDistance(distance);
         opStationName = endStation;
         opLineKey = newLineKey;
         System.out.println("Linia poprawnie utworzona");
     }
 
+    //  Usuwanie (delate) /////////////////////
 
-    public void defaultRailSystemFill() {
-
-        int stationsSize = railSystem.stations.size();
-        int pTrainNumber = 1;
-        int cTrainNumber = 1;
-        int locoNumber = 1;
-        int carNumber = 1;
-
-        for (Map.Entry<String, Station> stationEntry : railSystem.stations.entrySet()) {
-            // tworzę 2 pociągi na każdej stacji 1 osobowy i 1 ciężarowy
-            for (int i = 0; i < 2; i++) {
-                // lista wszystkich linii
-                LinkedList<String> allLines = new LinkedList<>();
-                for (Map.Entry<String, Line> line : railSystem.lines.entrySet()) {
-                    allLines.add(line.getKey());
-                }
-                // projektowanie Path dla pociągu (taka sama dla pasażerskiego i ciężarowego)
-                LinkedList<String> thisPath = new LinkedList<>();
-                String startStration = stationEntry.getKey();
-                String prevStration = stationEntry.getKey();
-                for (int j = 0; j <5; j++) {
-                    for (String line : allLines) {
-                        if (line.startsWith(startStration) && !line.endsWith(prevStration)){
-                            thisPath.add(line);
-                            String[] cities = line.split("_");
-                            startStration = cities[1];
-                            prevStration = cities[0];
-                            break;
+    public void remove() {
+        System.out.println("UWAGA! Usuwająć 1 obiekt usuniesz też połączone z nim obiekty albo zmienisz ich stan,");
+        System.out.println("np: ");
+        System.out.println("usuwając stację usuwasz też i połączenia które wychodziły z tej stacji");
+        System.out.println("usuwając pociąg usuwasz też lokomotywę i wagony razem z łądunkiem");
+        System.out.println("usuwając lokomotywę usuwasz też cały pociąg razem z wagonami");
+        System.out.println("usuwając wagon usuwasz też jego ładunek");
+        System.out.println("usuwając trasę usuwasz też pociągi które kursuwały na tej trasie i wszytko co z nimi jest połączone");
+        System.out.println("usuwając połączenie usuwasz też całą trasę która zawierała to połączenie");
+        System.out.println();
+        System.out.println("Wybierz jaki obiekt chcesz usunąć");
+        System.out.println("Wpisz odpowiednią małą litere");
+        System.out.println("s - (station) usuwanie stacji");
+        System.out.println("t - (train) usuwanie pociągu");
+        System.out.println("l - (locomotive) usuwanie lokomortywy");
+        System.out.println("c - (car) usuwanie wagonu");
+        System.out.println("p - (path) usuwanie trasy");
+        System.out.println("j - (join) usuwanie połączenia między dwoma stacjami");
+        boolean decision = false;
+        String type = "";
+        while (!decision) {
+            String object = sc.nextLine();
+            if (object.length() != 1)
+                System.out.println("Można wpisać tylko 1 znak");
+            else {
+                if (object.equals("s")) {
+                    chooseStationToRemove();
+                    List<String > removedLines = new LinkedList<>();
+                    Map<String, Line> copyOfLines = new HashMap<>(railSystem.lines);
+                    for (Map.Entry<String, Line> lineEntry : copyOfLines.entrySet()) {
+                        if ((lineEntry.getKey().startsWith(opStationName) || lineEntry.getKey().endsWith(opStationName))){
+                            removedLines.add(lineEntry.getKey());
+                            railSystem.lines.remove(lineEntry);
                         }
                     }
+                    List<String > trainKeys = new LinkedList<>();
+                    Map<String, Path> copyOfPaths = new HashMap<>(railSystem.paths);
+                    for (Map.Entry<String, Path> pathEntry : copyOfPaths.entrySet()) {
+                        for (String removedLine : removedLines) {
+                            if (pathEntry.getValue().linesKeys.contains(removedLine)){
+                                if (pathEntry.getValue().trainsKeys.size() != 0){
+                                    trainKeys = pathEntry.getValue().trainsKeys;
+                                }
+                                railSystem.paths.remove(pathEntry);
+                            }
+                        }
+                    }
+                    List<String > locomotiveKeys = new LinkedList<>();
+                    Map<String, Train> copyOfTrains = new HashMap<>(railSystem.trains);
+                    for (Map.Entry<String, Train> trainEntry : copyOfTrains.entrySet()) {
+                        if (trainKeys.contains(trainEntry.getKey())){
+                            locomotiveKeys.add(trainEntry.getValue().getLocomotiveName());
+                            railSystem.trains.remove(trainEntry);
+                        }
+                    }
+                    Map<String, Car> copyOfCars = new HashMap<>(railSystem.cars);
+                    for (Map.Entry<String, Car> carEntry : copyOfCars.entrySet()) {
+                        for (String trainKey : trainKeys) {
+                            if (carEntry.getValue().getTrainKey().equals(trainKey)) {
+                                railSystem.cars.remove(carEntry);
+                            }
+                            railSystem.trains.remove(trainKey);
+                        }
+                    }
+                    for (String locomotiveKey : locomotiveKeys) {
+                        railSystem.locomotives.remove(locomotiveKey);
+                    }
+
+                    railSystem.stations.remove(opStationName);
+                    System.out.println("Stacja: " + opStationName + " została usunięta");
+                    decision = true;
+                } else if (object.equals("t")) {
+                    chooseTrainToRemove();
+                    String locomotiveName = railSystem.trains.get(opTrainKey).getLocomotiveName();
+                    railSystem.locomotives.remove(locomotiveName);
+                    Map<String, Car> copyOfCars = new HashMap<>(railSystem.cars);
+                    for (Map.Entry<String, Car> carEntry : copyOfCars.entrySet()) {
+                        if (carEntry.getValue().getTrainKey().equals(opTrainKey)) {
+                            railSystem.cars.remove(carEntry.getKey());
+                        }
+                    }
+                    railSystem.trains.remove(opTrainKey);
+                    System.out.println("Pociąg: " + opTrainKey + " został usunięty");
+                    decision = true;
+                } else if (object.equals("l")) {
+                    chooseLocomotiveToRemove();
+                    String trainKey = railSystem.locomotives.get(oplLocomotiveName).getTrainKey();
+                    railSystem.locomotives.remove(oplLocomotiveName);
+                    Map<String, Car> copyOfCars = new HashMap<>(railSystem.cars);
+                    for (Map.Entry<String, Car> carEntry : copyOfCars.entrySet()) {
+                        if (carEntry.getValue().getTrainKey().equals(trainKey)) {
+                            railSystem.cars.remove(carEntry.getKey());
+                        }
+                    }
+                    railSystem.trains.remove(trainKey);
+                    System.out.println("Lokomotywa: " + oplLocomotiveName + " została usunięta");
+                    decision = true;
+                } else if (object.equals("c")) {
+                    chooseCarToRemove();
+                    String trainKey = railSystem.cars.get(opCarName).getTrainKey();
+                    railSystem.trains.get(trainKey).carsNames.remove(opCarName);
+                    railSystem.cars.remove(opCarName);
+                    System.out.println("Wagon: " + opCarName + " został usunięty");
+                    decision = true;
+                } else if (object.equals("p")) {
+                    choosePathToRemove();
+                    if (railSystem.paths.get(opPathKey).trainsKeys.size() != 0) {
+                        for (String trainkey : railSystem.paths.get(opPathKey).trainsKeys) {
+                            Map<String, Car> copyOfCars = new HashMap<>(railSystem.cars);
+                            for (Map.Entry<String, Car> carEntry : copyOfCars.entrySet()) {
+                                if (carEntry.getValue().getTrainKey().equals(trainkey)) {
+                                    railSystem.cars.remove(carEntry.getKey());
+                                }
+                            }
+                            String locomotiveName = railSystem.trains.get(trainkey).getLocomotiveName();
+                            railSystem.locomotives.remove(locomotiveName);
+                            railSystem.trains.remove(trainkey);
+                        }
+                    }
+                    railSystem.paths.remove(opPathKey);
+                    System.out.println("Trasa: " + opPathKey + " została usunięta");
+                    decision = true;
+                } else if (object.equals("j")) {
+                    chooseLineToRemove();
+                    Map<String, Path> copyOfPaths = new HashMap<>(railSystem.paths);
+                    for (Map.Entry<String, Path> pathEntry : copyOfPaths.entrySet()) {
+                        if (pathEntry.getValue().linesKeys.contains(opLineKey)) {
+                            if (pathEntry.getValue().trainsKeys.size() != 0) {
+                                for (String trainkey : pathEntry.getValue().trainsKeys) {
+                                    Map<String, Car> copyOfCars = new HashMap<>(railSystem.cars);
+                                    for (Map.Entry<String, Car> carEntry : copyOfCars.entrySet()) {
+                                        if (carEntry.getValue().getTrainKey().equals(trainkey)) {
+                                            railSystem.cars.remove(carEntry.getKey());
+                                        }
+                                    }
+                                    String locomotiveName = railSystem.trains.get(trainkey).getLocomotiveName();
+                                    railSystem.locomotives.remove(locomotiveName);
+                                    railSystem.trains.remove(trainkey);
+                                }
+                            }
+                            railSystem.paths.remove(pathEntry.getKey());
+                        }
+                    }
+                    String[] cities = opLineKey.split("_");
+                    railSystem.lines.remove(cities[1] + "_" + cities[0]);
+                    railSystem.lines.remove(opLineKey);
+                    System.out.println("Linia: " + opLineKey + " została usunięta");
+                    decision = true;
+                } else {
+                    System.out.println("Błąd. można woisywać wyłącznie literki z listy");
                 }
-
-                String pathKey = stationEntry.getKey() + "__" + startStration;
-                railSystem.paths.put(pathKey, new Path(pathKey, thisPath));
-
-
-                // Passenger train
-                String ptTrainName = "PT_000" + (pTrainNumber++);
-                railSystem.trains.put(ptTrainName, new Train(ptTrainName));
-                railSystem.trains.get(ptTrainName).setHomeStationName(stationEntry.getKey());
-                String ptLocoName = "l" + (locoNumber++);
-                railSystem.locomotives.put(ptLocoName, new Locomotive(ptLocoName, stationEntry.getKey()));
-                railSystem.trains.get(ptTrainName).setlocomotiveName(ptLocoName);
-                // do każdego pociągu 1 trasa
-                railSystem.locomotives.get(ptLocoName).setSourceStation(stationEntry.getKey());
-                railSystem.locomotives.get(ptLocoName).setDestinationStation(startStration);
-                railSystem.locomotives.get(ptLocoName).setPathKey(pathKey);
-                railSystem.paths.get(pathKey).trainsKeys.add(ptTrainName);
-                // do każdego pociągu 5 wagonów
-                for (int j = 0; j < 5; j++) {
-                    String pCarName = "c" + (carNumber++);
-                    railSystem.cars.put(pCarName, new PassengerCar(stationEntry.getKey()));
-                    railSystem.cars.get(pCarName).setHomeStation(stationEntry.getKey());
-                    railSystem.cars.get(pCarName).setTrainKey(ptTrainName);
-                    railSystem.trains.get(ptTrainName).carsNames.add(pCarName);
-
-                }
-                // Cargo train
-                String ctTrainName = "CT_000" + (cTrainNumber++);
-                railSystem.trains.put(ctTrainName, new Train(ctTrainName));
-                railSystem.trains.get(ctTrainName).setHomeStationName(stationEntry.getKey());
-                String ctLocoName = "l" + (locoNumber++);
-                railSystem.locomotives.put(ctLocoName, new Locomotive(ctLocoName, stationEntry.getKey()));
-                railSystem.trains.get(ctTrainName).setlocomotiveName(ctLocoName);
-                // do każdego pociągu 1 trasa
-                railSystem.locomotives.get(ctLocoName).setSourceStation(stationEntry.getKey());
-                railSystem.locomotives.get(ctLocoName).setDestinationStation(startStration);
-                railSystem.locomotives.get(ctLocoName).setPathKey(pathKey);
-                railSystem.paths.get(pathKey).trainsKeys.add(ctTrainName);
-                // do każdego pociągu 5 wagonów
-                for (int j = 0; j < 5; j++) {
-                    String cCarName = "c" + (carNumber++);
-                    railSystem.cars.put(cCarName, new PassengerCar(stationEntry.getKey()));
-                    railSystem.cars.get(cCarName).setHomeStation(stationEntry.getKey());
-                    railSystem.cars.get(cCarName).setTrainKey(ctTrainName);
-                    railSystem.trains.get(ctTrainName).carsNames.add(cCarName);
-
-                }
-
             }
+        }
+
+
+    }
+
+    public void chooseStationToRemove() {
+        //tworzę tymczasową listę stacji
+        List<String> listedStations = new LinkedList<>();
+        for (Map.Entry<String, Station> entry : railSystem.stations.entrySet()) {
+            listedStations.add(entry.getKey());
+        }
+        // wyswietlam listę stacji
+        for (String station : listedStations) {
+            System.out.println(station);
+        }
+        System.out.println("Wpisz albo skopiuj nazwę stacji");
+        String stationDecision = "";
+        stationDecision = sc.nextLine();
+        // walidacja nazwy stacji
+        while (!listedStations.contains(stationDecision)) {
+            stationDecision = sc.nextLine();
+            if (!listedStations.contains(stationDecision)) {
+                System.out.println("Wybrana przez ciebie stacja nie istnieje");
+            }
+        }
+        // sukces:
+        if (listedStations.contains(stationDecision)) {
+            opStationName = stationDecision;
         }
     }
 
+    public void chooseTrainToRemove() {
+        String trainDecision = "";
+        //tworzę tymczasową listę pociągów
+        List<String> listedTrains = new LinkedList<>();
+        listedTrains.clear();
+        for (Map.Entry<String, Train> entry : railSystem.trains.entrySet()) {
+            listedTrains.add(entry.getKey());
+        }
+        // wyswietlam listę pociągów
+        System.out.println("Lista pociągów:");
+        for (String train : listedTrains) {
+            System.out.println(train);
+        }
+        System.out.println("Wpisz albo skopiuj nazwę pociągu który chcesz usunąć");
+        // walidacja nazwy pociągu
+        while (!listedTrains.contains(trainDecision)) {
+            trainDecision = sc.nextLine();
+            if (!listedTrains.contains(trainDecision)) {
+                System.out.println("Wybrany przez ciebie pociąg nie istnieje");
+            }
+        }
+        // sukces:
+        if (listedTrains.contains(trainDecision)) {
+            opTrainKey = trainDecision;
+        }
+    }
 
+    public void chooseLocomotiveToRemove() {
+        String locoDecision = "";
+        //tworzę tymczasową listę lokomotyw
+        List<String> listedLocomotives = new LinkedList<>();
+        listedLocomotives.clear();
+        for (Map.Entry<String, Locomotive> entry : railSystem.locomotives.entrySet()) {
+            listedLocomotives.add(entry.getKey());
+        }
+        // wyswietlam listę lokomotyw
+        System.out.println("Lista lokomotyw:");
+        for (String locomotive : listedLocomotives) {
+            System.out.println(locomotive);
+        }
+        System.out.println("Wpisz albo skopiuj nazwę lokomotywy którą chcesz usunąć");
+        // walidacja nazwy lokomotywy
+        while (!listedLocomotives.contains(locoDecision)) {
+            locoDecision = sc.nextLine();
+            if (!listedLocomotives.contains(locoDecision)) {
+                System.out.println("Wybrana przez ciebie lokomotywa nie istnieje");
+            }
+        }
+        // sukces:
+        if (listedLocomotives.contains(locoDecision)) {
+            oplLocomotiveName = locoDecision;
+        }
+    }
+
+    public void chooseCarToRemove() {
+        String carDecision = "";
+        carDecision = sc.nextLine();
+        //tworzę tymczasową listę wagonów
+        List<String> listedCars = new LinkedList<>();
+        for (Map.Entry<String, Car> entry : railSystem.cars.entrySet()) {
+            listedCars.add(entry.getKey());
+        }
+        // wyswietlam listę wagonów
+        System.out.println("Lista wagonów:");
+        for (String car : listedCars) {
+            System.out.println(car);
+        }
+        System.out.println("Wpisz albo skopiuj nazwę wagonu który chcesz usunąć");
+        // walidacja nazwy wagonu
+        while (!listedCars.contains(carDecision)) {
+            carDecision = sc.nextLine();
+            if (!listedCars.contains(carDecision)) {
+                System.out.println("Wybrany przez ciebie wagon nie istnieje");
+            }
+        }
+        // sukces:
+        if (listedCars.contains(carDecision)) {
+            opCarName = carDecision;
+        }
+    }
+
+    public void choosePathToRemove() {
+        String pathDecision = "";
+        //tworzę tymczasową listę tras
+        List<String> listedPaths = new LinkedList<>();
+        for (Map.Entry<String, Path> entry : railSystem.paths.entrySet()) {
+            listedPaths.add(entry.getKey());
+        }
+        System.out.println("Lista tras:");
+        for (String path : listedPaths) {
+            System.out.println(path);
+        }
+
+        System.out.println("Wpisz albo skopiuj nazwę trasy którą chcesz usunąć");
+        // walidacja nazwy pociągu
+        while (!listedPaths.contains(pathDecision)) {
+            pathDecision = sc.nextLine();
+            if (!listedPaths.contains(pathDecision)) {
+                System.out.println("Wybrana przez ciebie trasa nie istnieje");
+            }
+        }
+        // sukces:
+        if (listedPaths.contains(pathDecision)) {
+            opPathKey = pathDecision;
+        }
+    }
+
+    public void removeLine(){
+
+    }
+
+    public void chooseLineToRemove() {
+        String lineDecision = "";
+        boolean lineDecisionSucces = false;
+        //tworzę tymczasową listę linii ze stacji na której jesteśmy
+        List<String> listedLines = new LinkedList<>();
+        for (Map.Entry<String, Line> entry : railSystem.lines.entrySet()) {
+            listedLines.add(entry.getKey());
+        }
+        System.out.println("Lista linii:");
+        for (String line : listedLines) {
+            System.out.println(line);
+        }
+
+        while (!listedLines.contains(lineDecision)) {
+            lineDecision = sc.nextLine();
+            if (!listedLines.contains(lineDecision)) {
+                System.out.println("Wybrana przez ciebie linia nie istnieje");
+            }
+        }
+        // sukces:
+        if (listedLines.contains(lineDecision)) {
+            opLineKey = lineDecision;
+        }
+
+
+
+    }
 
 
 }

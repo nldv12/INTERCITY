@@ -7,6 +7,7 @@ public class Line {
     String station1Key;
     String station2Key;
     String key;
+    private int distance;
 
     public Line(String station1Key, String station2Key) {
         this.station1Key = station1Key;
@@ -17,5 +18,13 @@ public class Line {
     @Override
     public String toString() {
         return key;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }
