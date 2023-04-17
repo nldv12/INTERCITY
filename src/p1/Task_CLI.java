@@ -24,8 +24,7 @@ public class Task_CLI implements Runnable {
     String opPathKey = "";
 
 
-    public Task_CLI(RailSystem railSystem) {
-        this.railSystem = railSystem;
+    public Task_CLI() {
     }
 
     @Override

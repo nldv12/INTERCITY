@@ -9,7 +9,7 @@ public class Main {
 //        railSystem.alerts.add("Alert 2");
 
         Task_LocomotiveSpeedChange task_LocomotiveSpeedChange = new Task_LocomotiveSpeedChange();
-        Task_CLI task_cli = new Task_CLI(railSystem);
+        Task_CLI task_cli = new Task_CLI();
         Task_TrainsMovement task_trainsMovement = new Task_TrainsMovement();
         Task_Alerts task_alerts = new Task_Alerts();
         Task2 task2 = new Task2();

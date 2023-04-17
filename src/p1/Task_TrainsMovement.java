@@ -1,42 +1,36 @@
 package p1;
 
-public class Task_TrainsMovement implements Runnable{
+public class Task_TrainsMovement implements Runnable {
     RailSystem railSystem = RailSystem.getRailSystem();
 
     @Override
     public void run() {
-
-        // Uruchomienie wątku symulującego ruch pociągów
-            Thread simulationThread = new Thread(() -> {
-                while (true) {
-                    for (Locomotive locomotive : railSystem.locomotives.values()) {
-                        if (locomotive.isMoving()) {
-                            // Jeśli pociąg jest w ruchu
-                            double distance = locomotive.getCurrentSpeed() / 3600; // Obliczenie dystansu pokonanego za 1 sekundę
-                            locomotive.moveLocomotive(distance); // Przesunięcie lokomotywy na nową pozycję
-
-                            // Sprawdzenie, czy pociąg dotarł do stacji końcowej
-                            if (locomotive.getDistancePassedPercantageTotal() == 100) {
-                                // odwrócenie trasy i wyruszenie w nową trasę
-                            }
-                        }
-                    }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        try {
+            long prevTime = System.currentTimeMillis();
+            while (true) {
+                long now = System.currentTimeMillis();
+                long deltaTime = now - prevTime;
+                for (Locomotive locomotive : railSystem.locomotives.values()) {
+                    // Jeśli pociąg jest w ruchu
+                    locomotive.moveLocomotive(now, deltaTime); // Przesunięcie lokomotywy na nową pozycję
+                    // Sprawdzenie, czy pociąg dotarł do stacji końcowej
+                    if (locomotive.getDistancePassedPercantageTotal() == 100) {
+                        // odwrócenie trasy i wyruszenie w nową trasę
                     }
                 }
-            });
-            simulationThread.start();
+                prevTime = now;
+                Thread.sleep(1);
+            }
 
+        } catch (InterruptedException e) {
+            e.printStackTrace();
 
-
-
-
+        }
 
     }
 
-
-
 }
+
+
+
+

@@ -8,7 +8,6 @@ public class Line {
     String station2Key;
     String key;
     private int distance;
-
     public Line(String station1Key, String station2Key) {
         this.station1Key = station1Key;
         this.station2Key = station2Key;

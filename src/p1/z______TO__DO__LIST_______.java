@@ -7,18 +7,9 @@ import java.util.Map;
 
 public class z______TO__DO__LIST_______ {
     /*
-    poprawiony task lokomotive speed change
-    rail system mechanizmem Singleton k
-    dodany railroad hazzard
-    dodane usuwanie obiektów (do poprawy)
 
 
 
-    1. Як зробити синхронізацію краще всього
-    2. и це взвгвлі потрібно??? 27 лінійка CLI
-    public Task_CLI(RailSystem railSystem) {
-        this.railSystem = railSystem;
-    }
 
 
     // nowy task pojizd jide po linii

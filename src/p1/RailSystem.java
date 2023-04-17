@@ -20,23 +20,34 @@ public class RailSystem {
         defaultRailSystemFill();
     }
 
-    public Queue<String> alerts = new LinkedList<>();
-    Map<String, Station> stations = new LinkedHashMap<>();
-    Map<String, Locomotive> locomotives = new LinkedHashMap<>();
-    Map<String, Car> cars = new LinkedHashMap<>();
-    Map<String, Line> lines = new LinkedHashMap<>();
-    Map<String, Path> paths = new LinkedHashMap<>();
-    Map<String, Train> trains = new LinkedHashMap<>();
+//    public Queue<String> alerts = new LinkedList<>();
+//    Map<String, Station> stations = new LinkedHashMap<>();
+//    Map<String, Locomotive> locomotives = new LinkedHashMap<>();
+//    Map<String, Car> cars = new LinkedHashMap<>();
+//    Map<String, Line> lines = new LinkedHashMap<>();
+//    Map<String, Path> paths = new LinkedHashMap<>();
+//    Map<String, Train> trains = new LinkedHashMap<>();
 
-//    public Queue<String> alerts = new LinkedList<>(); //???? też ConcurrentHashMap?
-//    ConcurrentHashMap<String, Station> stations = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Locomotive> locomotives = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Car> cars = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Line> lines = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Path> paths = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Train> trains = new ConcurrentHashMap<>();
+    public Queue<String> alerts = new LinkedList<>(); //???? też ConcurrentHashMap?
+    ConcurrentHashMap<String, Station> stations = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Locomotive> locomotives = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Car> cars = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Line> lines = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Path> paths = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Train> trains = new ConcurrentHashMap<>();
 
+    public Line getLineByKey (String key){
+        return this.lines.get(key);
+    }
+    public Path getPathByKey (String key){
+        return this.paths.get(key);
+    }
+    public boolean isLineEmpty (String lineKey){
 
+        //for wszytkie locomotives current line is busy
+
+        return true;
+    }
 
     void stationsAndLinks() {
         // tworzę wszystkie domyślne stacje
