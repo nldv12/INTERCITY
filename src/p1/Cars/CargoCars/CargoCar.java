@@ -3,8 +3,8 @@ package p1.Cars.CargoCars;
 import p1.Cars.Car;
 
 public abstract class CargoCar extends Car {
-    public CargoCar(String homeStation) {
-        super(homeStation);
+    public CargoCar(String name,String homeStation) {
+        super(name, homeStation);
         this.type = "BasicFreightCar";
         this.id = this.hashCode();
         this.netWeight = 20;

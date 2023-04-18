@@ -1,8 +1,8 @@
 package p1.Cars;
 
 public class RestaurantCar extends Car {
-    public RestaurantCar(String homeStation) {
-        super(homeStation);
+    public RestaurantCar(String name,String homeStation) {
+        super(name, homeStation);
         this.type = "RestaurantCar";
         this.id = this.hashCode();
         this.netWeight = 35;

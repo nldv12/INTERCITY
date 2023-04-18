@@ -5,11 +5,14 @@ import p1.Enums.Shippers;
 import java.util.Optional;
 
 public abstract class Car {
-    public Car(String homeStation) {
+    public Car(String name,String homeStation) {
+        this.name = name;
         this.id = this.hashCode();
         this.homeStation = homeStation;
         this.grossWeight = this.netWeight;
     }
+
+    protected String name;
     String type;
     String homeStation = "";
     protected boolean isCargo;
@@ -18,9 +21,8 @@ public abstract class Car {
     public boolean needElectricity;
     public int id;
     String zabezpieczenia;
-    protected String trainKey = "";
+    private String trainKey = "";
     boolean isEmpty;
-
     String locomotive;
 
 
@@ -47,21 +49,20 @@ public abstract class Car {
     public int getNetWeight(){
         return this.netWeight;
     }
-
     public int getGrossWeight(){
         return this.grossWeight;
     }
-
     public String getHomeStation() {
         return homeStation;
     }
-
     public String getTrainKey() {
         return trainKey;
     }
-
     public boolean isCargo() {
         return isCargo;
+    }
+    public String getName() {
+        return name;
     }
 
 

@@ -10,7 +10,6 @@ import java.util.*;
 
 public class Task_CLI implements Runnable {
     RailSystem railSystem = RailSystem.getRailSystem();
-
     String opStationName = "";
     String opPreviousStationName = " ";
     String opTrainKey = "";

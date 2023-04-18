@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Path {
-    public Path(String pathKey, LinkedList<String> linesKeys) {
+    public Path(String pathKey, LinkedList<String> linesKeys, int totalPathDistance) {
+        this.totalPathDistance = totalPathDistance;
         this.linesKeys = linesKeys;
         this.pathKey = pathKey;
     }

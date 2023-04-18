@@ -1,8 +1,8 @@
 package p1.Cars.CargoCars;
 
 public class LiquidMaterialCargoCar extends CargoCar {
-    public LiquidMaterialCargoCar(String homeStation) {
-        super(homeStation);
+    public LiquidMaterialCargoCar(String name,String homeStation) {
+        super(name, homeStation);
         this.type = "LiquidMaterialFreightCar";
         this.id = this.hashCode();
         this.netWeight = 25;
