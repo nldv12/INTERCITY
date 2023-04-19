@@ -6,29 +6,28 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class z______TO__DO__LIST_______ {
-    /*
 
+
+    /*
+    how to
+    więcej połaczęń (linii)
+    150 procent trasy pokonano
 
    do poprawy:
-    ----- usuwanie stacji
-    ----- stacje się powtarzają w path
+    ----- usuwanie elementów (exceptions)
+    station
+    path
+    line
 
-   in Locomotive
-   ----  public void calcAndSetDistancePassedPercantageLocal
-         private double distancePassedLocal = 0;
-         private double distancePassedPercantageLocal = 0;
+
 
 
 
    ---- getReport(train) {
-            train.globalPositionPercentage (pomiędzy startową i docelową )
             train.whatLoaded
-            train.localPositionPercentage (pomiędzy najbliższymi stacjami )
 
 
-     ---- AppSate.txt => co 5 sekund wszystkie Trains.getReport(train)
-          - Cars sorted rosnąco według WAGI
-          - Trains sorted malejąco względem globalPositionPercentage left
+
 
      ---- Presentation.java
             każda funkcjonalność (strategiczna) dostępna do zaprezentowanai w prosty sposób (czytelny)
@@ -36,8 +35,6 @@ public class z______TO__DO__LIST_______ {
 
 --------- TO USE:::
 
-        ---- Interfejsy
-        ---- Lambda wyrażenia
 
 
 

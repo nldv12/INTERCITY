@@ -1,5 +1,8 @@
 package p1;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Task_TrainsMovement implements Runnable {
     RailSystem railSystem = RailSystem.getRailSystem();
 
@@ -16,7 +19,9 @@ public class Task_TrainsMovement implements Runnable {
                 long now = System.currentTimeMillis();
                 long deltaTime = now - prevTime;
 //                long deltaTime = 100;
-                for (Locomotive locomotive : railSystem.locomotives.values()) {
+
+                List<Locomotive> allLocomotives = new LinkedList<>(railSystem.getLocomotivesValues());
+                for (Locomotive locomotive : allLocomotives) {
                     locomotive.moveLocomotive(now, deltaTime); // Przesunięcie lokomotywy na nową pozycję
                 }
                 prevTime = now;

@@ -78,11 +78,13 @@ public class Locomotive {
                 distancePassedTotal = totalPathDistance;
             else
                 this.distancePassedTotal += railSystem.getLineByKey(currentLineKey.get()).getDistance();
-
             String nextStation = railSystem.lines.get(currentLineKey.orElse("")).station2Key;
             currentStation = Optional.of(nextStation);
             currentLineKey = Optional.empty();
             currentArrivalTime = now;
+            if (linesKeys.size() == 0){
+                System.out.println();
+            }
             linesKeys.remove(0);
             setMoving(false);
             if (currentStation.equals(Optional.of(destinationStation))) {
@@ -106,6 +108,10 @@ public class Locomotive {
         } else {
             timeToGo = now - currentArrivalTime > 2000;
         }
+        if (linesKeys.size() == 0){
+            System.out.println();
+        }
+
         String lineKey = linesKeys.get(0);
         if (timeToGo && RailSystem.getRailSystem().isLineEmpty(lineKey)) {
             currentStation = Optional.empty();
@@ -189,45 +195,45 @@ public class Locomotive {
     }
 
     // Setters --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public void setSourceStation(String sourceStation) {
+    public synchronized void setSourceStation(String sourceStation) {
         this.sourceStation = sourceStation;
     }
 
-    public void setHomeStation(String homeStation) {
+    public synchronized void setHomeStation(String homeStation) {
         this.homeStation = homeStation;
     }
 
-    public void setDestinationStation(String destinationStation) {
+    public synchronized void setDestinationStation(String destinationStation) {
         this.destinationStation = destinationStation;
     }
 
-    public void setPathKey(String pathKey) {
+    public synchronized void setPathKey(String pathKey) {
         linesKeys = new LinkedList<String>(RailSystem.getRailSystem().getPathByKey(pathKey).linesKeys);
         this.pathKey = pathKey;
     }
 
-    public void setMoving(boolean moving) {
+    public synchronized void setMoving(boolean moving) {
         isMoving = moving;
     }
 
-    public void setCurrentSpeed(int currentSpeed) {
+    public synchronized void setCurrentSpeed(int currentSpeed) {
         this.currentSpeed = currentSpeed;
     }
 
-    public void calcAndSetDistancePassedPercantageLocal(double distancePassedPercantage) {
+    public synchronized void calcAndSetDistancePassedPercantageLocal(double distancePassedPercantage) {
 //        this.distancePassedPercantageLocal = distancePassedKM * 100 / totalPathDistance;
     }
 
-    public void setTrainKey(String trainKey) {
+    public synchronized void setTrainKey(String trainKey) {
         this.trainKey = trainKey;
     }
 
 
-    public void setCurrentLineKey(Optional<String> currentLineKey) {
+    public synchronized void setCurrentLineKey(Optional<String> currentLineKey) {
         this.currentLineKey = currentLineKey;
     }
 
-    public void setCurrentStation(Optional<String> currentStation) {
+    public synchronized void setCurrentStation(Optional<String> currentStation) {
         this.currentStation = currentStation;
     }
 

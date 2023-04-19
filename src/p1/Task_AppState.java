@@ -1,38 +1,52 @@
 package p1;
 
 import java.io.*;
-import java.util.Formatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Task_AppState implements Runnable {
     RailSystem railSystem = RailSystem.getRailSystem();
 
     @Override
     public void run() {
-
         String plik = "E:\\Mój dysk\\JAVA\\___GUI___\\__PROJECTS__\\src\\p1\\AppState.txt";
+
 
         FileOutputStream fos = null;
         PrintWriter pw = null;
         try {
+            int counter = 0;
             clearFile(plik);
             while (true) {
-//                clearFile(plik);
+                if (counter == 10) {
+                    clearFile(plik);
+                    counter = 0;
+                }
+                counter++;
+
                 fos = new FileOutputStream(plik, true); // Otwarcie pliku w trybie dopisywania (append)
                 pw = new PrintWriter(fos);
 
-                for (String train : railSystem.trains.keySet()) {
+                List<Train> sortedTrains = new LinkedList<>(railSystem.getTrainsValues());
+                sortedTrains.sort(Comparator.comparingDouble(train -> railSystem.getLocomotive(train.getLocomotiveName()).getDistancePassedPercantageTotal()));
 
-                    String locomotive = railSystem.trains.get(train).getLocomotiveName();
-                    boolean isMoving = railSystem.locomotives.get(locomotive).isMoving();
-                    int carsCount = railSystem.trains.get(train).carsNames.size();
-//        double distancePassedPercantageTotal = railSystem.locomotives.get(locomotive).getDistancePassedPercantageTotal();
-                    int distancePassedPercantageTotal = (int) railSystem.locomotives.get(locomotive).getDistancePassedPercantageTotal();
-//        double distancePassedPercantageLocal = railSystem.locomotives.get(locomotive).getDistancePassedPercantageLocal();
-                    int distancePassedPercantageLocal = (int) railSystem.locomotives.get(locomotive).getDistancePassedPercantageLocal();
-                    String homeStationName = railSystem.trains.get(train).getHomeStationName();
+                List<String> listedTrainsKeys = new LinkedList<>();
+                for (Train train : sortedTrains) {
+                    listedTrainsKeys.add(train.getKey());
+                }
+
+                for (String train : listedTrainsKeys) {
+
+                    String locomotive = railSystem.getTrain(train).getLocomotiveName();
+                    boolean isMoving = railSystem.getLocomotive(locomotive).isMoving();
+                    int carsCount = railSystem.getTrain(train).carsNames.size();
+//        double distancePassedPercantageTotal = railSystem.getLocomotive(locomotive).getDistancePassedPercantageTotal();
+                    int distancePassedPercantageTotal = (int) railSystem.getLocomotive(locomotive).getDistancePassedPercantageTotal();
+//        double distancePassedPercantageLocal = railSystem.getLocomotive(locomotive).getDistancePassedPercantageLocal();
+                    int distancePassedPercantageLocal = (int) railSystem.getLocomotive(locomotive).getDistancePassedPercantageLocal();
+                    String homeStationName = railSystem.getTrain(train).getHomeStationName();
                     List<String> carNames = new LinkedList<>(railSystem.getCarsKeysSortedByCarWeight(train));
 
 //                pw.println("\n");
@@ -45,11 +59,11 @@ public class Task_AppState implements Runnable {
                         pw.println(carName);
                     }
                     if (isMoving) {
-                        String line = railSystem.locomotives.get(locomotive).currentLineKey.orElse("");
+                        String line = railSystem.getLocomotive(locomotive).currentLineKey.orElse("");
                         String[] cities = line.split("_");
                         pw.println("Pociąg jedize do stacji: " + cities[1]);
                     } else {
-                        String station = String.valueOf(railSystem.locomotives.get(locomotive).currentStation);
+                        String station = String.valueOf(railSystem.getLocomotive(locomotive).currentStation);
                         pw.println("Pociąg stoi na stacji: " + station);
                     }
                     pw.println("Lokomotywa: " + locomotive);
@@ -57,7 +71,6 @@ public class Task_AppState implements Runnable {
                 }
 //                System.out.println("Raporty zapisane w pliku");
                 Thread.sleep(5000);
-
                 pw.flush();
                 pw.close();
                 fos.close();
@@ -67,10 +80,11 @@ public class Task_AppState implements Runnable {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
+            if (pw != null)
+                pw.close();
             if (fos != null) {
                 try {
                     fos.close();
-                    pw.close();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -82,7 +96,6 @@ public class Task_AppState implements Runnable {
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(filePath, false);
-
             fileWriter.write(""); // Zapisujemy pusty napis, co skutkuje usunięciem zawartości pliku
         } finally {
             if (fileWriter != null) {
@@ -90,4 +103,5 @@ public class Task_AppState implements Runnable {
             }
         }
     }
+
 }

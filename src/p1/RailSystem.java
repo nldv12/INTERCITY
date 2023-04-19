@@ -1,10 +1,7 @@
 package p1;
 
-import p1.Cars.Car;
-import p1.Cars.CargoCars.BasicCargoCar;
-import p1.Cars.LuggagePostCar;
-import p1.Cars.PassengerCar;
-import p1.Cars.PostCar;
+import p1.Cars.*;
+import p1.Cars.CargoCars.*;
 import p1.Enums.Locations;
 
 import java.util.*;
@@ -24,38 +21,110 @@ public class RailSystem {
 
     }
 
-    public Queue<String> alerts = new LinkedList<>();
-    Map<String, Station> stations = new LinkedHashMap<>();
-    Map<String, Locomotive> locomotives = new LinkedHashMap<>();
-    Map<String, Car> cars = new LinkedHashMap<>();
-    Map<String, Line> lines = new LinkedHashMap<>();
-    Map<String, Path> paths = new LinkedHashMap<>();
-    Map<String, Train> trains = new LinkedHashMap<>();
+//    public Queue<String> alerts = new LinkedList<>();
+//    Map<String, Station> stations = new LinkedHashMap<>();
+//    Map<String, Locomotive> locomotives = new LinkedHashMap<>();
+//    Map<String, Train> trains = new LinkedHashMap<>();
+//    Map<String, Car> cars = new LinkedHashMap<>();
+//    Map<String, Line> lines = new LinkedHashMap<>();
+//    Map<String, Path> paths = new LinkedHashMap<>();
 
-//    public Queue<String> alerts = new LinkedList<>(); //???? też ConcurrentHashMap?
-//    ConcurrentHashMap<String, Station> stations = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Locomotive> locomotives = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Car> cars = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Line> lines = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Path> paths = new ConcurrentHashMap<>();
-//    ConcurrentHashMap<String, Train> trains = new ConcurrentHashMap<>();
+    public Queue<String> alerts = new LinkedList<>(); //???? też ConcurrentHashMap?
+    ConcurrentHashMap<String, Station> stations = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Locomotive> locomotives = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Car> cars = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Line> lines = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Path> paths = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Train> trains = new ConcurrentHashMap<>();
+
+    // GETTERS
+
+    public synchronized Map<String, Station> getStations() {
+        return stations;
+    }
+
+    public synchronized Map<String, Locomotive> getLocomotives() {
+        return locomotives;
+    }
+
+    public synchronized Map<String, Train> getTrains() {
+        return trains;
+    }
+
+    public synchronized Map<String, Car> getCars() {
+        return cars;
+    }
+
+    public synchronized Map<String, Line> getLines() {
+        return lines;
+    }
+
+    public synchronized Map<String, Path> getPaths() {
+        return paths;
+    }
+
+    //lists of keys and values from map
+
+    public synchronized List getStrationsKeys() {
+        return new LinkedList<>(stations.keySet());
+    }
+
+    public synchronized List getLocomotivesKeys() {
+        return new LinkedList<>(locomotives.keySet());
+    }
+
+    public synchronized List getLocomotivesValues() {
+        return new LinkedList<>(locomotives.values());
+    }
+
+    public synchronized List getTrainsKeys() {
+        return new LinkedList<>(trains.keySet());
+    }
+
+    public synchronized List getTrainsValues() {
+        return new LinkedList<>(trains.values());
+    }
+
+    public synchronized List getCarsKeys() {
+        return new LinkedList<>(cars.keySet());
+    }
+
+    public synchronized List getCarsValues() {
+        return new LinkedList<>(cars.values());
+    }
+
+    public synchronized List getLinesKeys() {
+        return new LinkedList<>(lines.keySet());
+    }
+
+    public synchronized List getLinesValues() {
+        return new LinkedList<>(lines.values());
+    }
+
+    public synchronized List getPathsKeys() {
+        return new LinkedList<>(paths.keySet());
+    }
+
+    public synchronized List getPathsValues() {
+        return new LinkedList<>(paths.values());
+    }
 
 
-    public Line getLineByKey(String key) {
+    public synchronized Line getLineByKey(String key) {
         return this.lines.get(key);
     }
 
-    public Path getPathByKey(String key) {
+    public synchronized Path getPathByKey(String key) {
         return this.paths.get(key);
     }
 
-    public List getPathLinesByPathKey(String key) {
+    public synchronized List getPathLinesByPathKey(String key) {
         return this.paths.get(key).linesKeys;
     }
 
-    public boolean isLineEmpty(String lineKey) {
+    public synchronized boolean isLineEmpty(String lineKey) {
         boolean empty = false;
-        for (Locomotive locomotive : railSystem.locomotives.values()) {
+        for (Locomotive locomotive : this.locomotives.values()) {
             if (locomotive.getCurrentLineKey().equals(lineKey)) {
                 empty = false;
                 break;
@@ -66,9 +135,9 @@ public class RailSystem {
         return empty;
     }
 
-    public LinkedList getCarsKeysSortedByCarWeight(String trainKey) {
+    public synchronized LinkedList getCarsKeysSortedByCarWeight(String trainKey) {
         LinkedList<Car> cars = new LinkedList<>();
-        for (Car car : railSystem.cars.values()) {
+        for (Car car : this.cars.values()) {
             if (car.getTrainKey().equals(trainKey)) {
                 cars.add(car);
             }
@@ -83,6 +152,35 @@ public class RailSystem {
     }
 
 
+    // hooks
+
+
+    public synchronized Locomotive getLocomotive(String locomotiveName) {
+        return this.locomotives.get(locomotiveName);
+    }
+
+    public synchronized Train getTrain(String trainKey) {
+        return this.trains.get(trainKey);
+    }
+
+    public synchronized Car getCar(String carName) {
+        return this.cars.get(carName);
+    }
+
+    public synchronized Path getPath(String pathKey) {
+        return this.paths.get(pathKey);
+    }
+
+
+    public synchronized String getLocoNameByTrain(String trainKey) {
+        return this.trains.get(trainKey).getLocomotiveName();
+    }
+
+    public synchronized int getCarsCountByTrain(String trainKey) {
+        return this.trains.get(trainKey).carsNames.size();
+    }
+
+    // KEY METHODS
     void stationsAndLinks() {
         // tworzę wszystkie domyślne stacje
 
@@ -184,36 +282,37 @@ public class RailSystem {
 
     }
 
+
     //    void filrailsTest (){
-//        railSystem.locomotives.put("l1",new Locomotive("l1","LONDON"));
-//        railSystem.lines.put("LONDON_BIRMINGHAM", new Line("LONDON","BIRMINGHAM"));
-//        railSystem.lines.get("LONDON_BIRMINGHAM").setDistance(20);
+//        this.locomotives.put("l1",new Locomotive("l1","LONDON"));
+//        this.lines.put("LONDON_BIRMINGHAM", new Line("LONDON","BIRMINGHAM"));
+//        this.lines.get("LONDON_BIRMINGHAM").setDistance(20);
 //
-//        railSystem.lines.put("BIRMINGHAM_LONDON", new Line("BIRMINGHAM","LONDON"));
-//        railSystem.lines.get("BIRMINGHAM_LONDON").setDistance(20);
+//        this.lines.put("BIRMINGHAM_LONDON", new Line("BIRMINGHAM","LONDON"));
+//        this.lines.get("BIRMINGHAM_LONDON").setDistance(20);
 //
-//        railSystem.lines.put("BIRMINGHAM_LEEDS", new Line("BIRMINGHAM","LEEDS"));
-//        railSystem.lines.get("BIRMINGHAM_LEEDS").setDistance(20);
+//        this.lines.put("BIRMINGHAM_LEEDS", new Line("BIRMINGHAM","LEEDS"));
+//        this.lines.get("BIRMINGHAM_LEEDS").setDistance(20);
 //
-//        railSystem.lines.put("LEEDS_BIRMINGHAM", new Line("LEEDS","BIRMINGHAM"));
-//        railSystem.lines.get("LEEDS_BIRMINGHAM").setDistance(20);
+//        this.lines.put("LEEDS_BIRMINGHAM", new Line("LEEDS","BIRMINGHAM"));
+//        this.lines.get("LEEDS_BIRMINGHAM").setDistance(20);
 //
-//        railSystem.lines.put("LEEDS_MANCHESTER", new Line("LEEDS","MANCHESTER"));
-//        railSystem.lines.get("LEEDS_MANCHESTER").setDistance(20);
+//        this.lines.put("LEEDS_MANCHESTER", new Line("LEEDS","MANCHESTER"));
+//        this.lines.get("LEEDS_MANCHESTER").setDistance(20);
 //
-//        railSystem.lines.put("MANCHESTER_LEEDS", new Line("MANCHESTER","LEEDS"));
-//        railSystem.lines.get("MANCHESTER_LEEDS").setDistance(20);
+//        this.lines.put("MANCHESTER_LEEDS", new Line("MANCHESTER","LEEDS"));
+//        this.lines.get("MANCHESTER_LEEDS").setDistance(20);
 //
-//        railSystem.lines.put("MANCHESTER_LIVERPOOL", new Line("MANCHESTER","LIVERPOOL"));
-//        railSystem.lines.get("MANCHESTER_LIVERPOOL").setDistance(20);
+//        this.lines.put("MANCHESTER_LIVERPOOL", new Line("MANCHESTER","LIVERPOOL"));
+//        this.lines.get("MANCHESTER_LIVERPOOL").setDistance(20);
 //
-//        railSystem.lines.put("LIVERPOOL_MANCHESTER", new Line("LIVERPOOL","MANCHESTER"));
-//        railSystem.lines.get("LIVERPOOL_MANCHESTER").setDistance(20);
+//        this.lines.put("LIVERPOOL_MANCHESTER", new Line("LIVERPOOL","MANCHESTER"));
+//        this.lines.get("LIVERPOOL_MANCHESTER").setDistance(20);
 //
-//        railSystem.locomotives.get("l1").linesKeys.add("LONDON_BIRMINGHAM");
-//        railSystem.locomotives.get("l1").linesKeys.add("BIRMINGHAM_LEEDS");
-//        railSystem.locomotives.get("l1").linesKeys.add("LEEDS_MANCHESTER");
-//        railSystem.locomotives.get("l1").linesKeys.add("MANCHESTER_LIVERPOOL");
+//        this.locomotives.get("l1").linesKeys.add("LONDON_BIRMINGHAM");
+//        this.locomotives.get("l1").linesKeys.add("BIRMINGHAM_LEEDS");
+//        this.locomotives.get("l1").linesKeys.add("LEEDS_MANCHESTER");
+//        this.locomotives.get("l1").linesKeys.add("MANCHESTER_LIVERPOOL");
 //        LinkedList<String> lines = new LinkedList<>();
 //        lines.add("LONDON_BIRMINGHAM");
 //        lines.add("BIRMINGHAM_LEEDS");
@@ -394,7 +493,7 @@ public class RailSystem {
 
         LinkedList<String> first13stations = new LinkedList<>();
         int countStation = 0;
-        for (Station station : railSystem.stations.values()) {
+        for (Station station : this.stations.values()) {
             first13stations.add(station.name);
             countStation++;
             if (countStation == 13) {
@@ -404,7 +503,7 @@ public class RailSystem {
 
         LinkedList<String> first13paths = new LinkedList<>();
         int countPath = 0;
-        for (Path path : railSystem.paths.values()) {
+        for (Path path : this.paths.values()) {
             first13paths.add(path.getPathKey());
             countPath++;
             if (countPath == 13) {
@@ -413,12 +512,10 @@ public class RailSystem {
         }
 
         for (int i = 0; i < 13; i++) {
-
             String[] pathKey = first13paths.get(i).split("__");
             // Passenger train
             String ptTrainName = "PT_000" + (pTrainNumber++);
-            this.trains.put(ptTrainName, new Train(ptTrainName));
-            this.trains.get(ptTrainName).setHomeStationName(first13stations.get(i));
+            this.addTrain(ptTrainName, first13stations.get(i));
             String ptLocoName = "l" + (locoNumber++);
             this.locomotives.put(ptLocoName, new Locomotive(ptLocoName, first13stations.get(i)));
             this.trains.get(ptTrainName).setlocomotiveName(ptLocoName);
@@ -443,8 +540,7 @@ public class RailSystem {
             }
             // Cargo train
             String ctTrainName = "CT_000" + (cTrainNumber++);
-            this.trains.put(ctTrainName, new Train(ctTrainName));
-            this.trains.get(ctTrainName).setHomeStationName(first13stations.get(i));
+            this.addTrain(ctTrainName, first13stations.get(i));
             String ctLocoName = "l" + (locoNumber++);
             this.locomotives.put(ctLocoName, new Locomotive(ctLocoName, first13stations.get(i)));
             this.trains.get(ctTrainName).setlocomotiveName(ctLocoName);
@@ -470,6 +566,167 @@ public class RailSystem {
 
 
     }
+
+
+    // SETTERS
+    public synchronized void addStation(String key) {
+        this.stations.put(key, new Station(key));
+    }
+
+    public synchronized void addTrain(String key, String homeStationName) {
+        this.trains.put(key, new Train(key, homeStationName));
+    }
+
+    public synchronized void addLocomotive(String name, String homeStationName) {
+        this.locomotives.put(name, new Locomotive(name, homeStationName));
+    }
+
+    public synchronized void addCar(String opCarName, boolean opCarIsCargo, String carType, String opStationName) {
+        if (opCarIsCargo) {
+            switch (carType) {
+                case "1" -> this.cars.put(opCarName, new BasicCargoCar(opCarName, opStationName));
+                case "2" -> this.cars.put(opCarName, new ExplosiveMaterialCargoCar(opCarName, opStationName));
+                case "3" -> this.cars.put(opCarName, new GasMaterialCargoCar(opCarName, opStationName));
+                case "4" -> this.cars.put(opCarName, new HeavyCargoCar(opCarName, opStationName));
+                case "5" -> this.cars.put(opCarName, new LiquidMaterialCargoCar(opCarName, opStationName));
+                case "6" -> this.cars.put(opCarName, new LiquidToxicMaterialCargoCar(opCarName, opStationName));
+                case "7" -> this.cars.put(opCarName, new RefrigeratedCargoCar(opCarName, opStationName));
+                case "8" -> this.cars.put(opCarName, new ToxicMaterialCargoCar(opCarName, opStationName));
+                default -> System.out.println("Err");
+            }
+        } else {
+            switch (carType) {
+                case "1" -> this.cars.put(opCarName, new LuggagePostCar(opCarName, opStationName));
+                case "2" -> this.cars.put(opCarName, new PassengerCar(opCarName, opStationName));
+                case "3" -> this.cars.put(opCarName, new PostCar(opCarName, opStationName));
+                case "4" -> this.cars.put(opCarName, new RestaurantCar(opCarName, opStationName));
+                default -> System.out.println("Err");
+            }
+        }
+    }
+
+    public synchronized void addPath(String oplLocomotiveName, String opSourceStation, String opPathKey, String opStationName,
+                                     LinkedList<String> opPathLines, String opTrainKey) {
+        // stacja końcowa lokomotywy - ustalamy
+        this.locomotives.get(oplLocomotiveName).setDestinationStation(opStationName);
+        String pathKey = opSourceStation + "__" + opStationName;
+        this.locomotives.get(oplLocomotiveName).setPathKey(pathKey);
+        opPathKey = pathKey;
+        // tworzymy obiekt path
+        int distance = 0;
+        for (Map.Entry<String, Line> line : this.lines.entrySet()) {
+            if (opPathLines.contains(line.getKey())) {
+                distance += line.getValue().getDistance();
+            }
+        }
+        this.paths.put(pathKey, new Path(pathKey, opPathLines, distance));
+        this.paths.get(pathKey).trainsKeys.add(opTrainKey);
+    }
+
+    public synchronized void addLine(String newLineKey, String startStation, String endStation, int distance) {
+        this.lines.put(newLineKey, new Line(startStation, endStation));
+        this.lines.get(newLineKey).setDistance(distance);
+    }
+
+
+    // REMOVE
+    public synchronized void removeStation(String opStationName) {
+        this.stations.remove(opStationName);
+    }
+
+    public synchronized void removeTrain(String opTrainKey) {
+        this.trains.remove(opTrainKey);
+    }
+
+    public synchronized void removeLocomotive(String oplLocomotiveName) {
+        this.locomotives.remove(oplLocomotiveName);
+    }
+
+    public synchronized void removeCar(String opCarName) {
+        String trainKey = this.getCar(opCarName).getTrainKey();
+        this.getTrain(trainKey).carsNames.remove(opCarName);
+        this.cars.remove(opCarName);
+    }
+
+    public synchronized void removePath(String opPathKey) {
+        this.paths.remove(opPathKey);
+    }
+
+    public synchronized void removeLine(String opLineKey) {
+        this.lines.remove(opLineKey);
+    }
+
+    public synchronized void removeTrain_Loco_Cars(String opTrainKey) {
+        String locomotiveName = this.getTrain(opTrainKey).getLocomotiveName();
+        removeLocomotive(locomotiveName);
+        removeTrain(opTrainKey);
+        removeCarsOfTrain(opTrainKey);
+    }
+
+    public synchronized void removeCarsOfTrain(String trainKey) {
+        Map<String, Car> copyOfCars = new HashMap<>(this.getCars());
+        for (Map.Entry<String, Car> carEntry : copyOfCars.entrySet()) {
+            if (carEntry.getValue().getTrainKey().equals(trainKey)) {
+                this.cars.remove(carEntry.getKey());
+            }
+        }
+    }
+
+    public synchronized void removeLocomotive_Train_Cars(String oplLocomotiveName) {
+        String trainKey = this.getLocomotive(oplLocomotiveName).getTrainKey();
+        removeLocomotive(oplLocomotiveName);
+        removeTrain(trainKey);
+        removeCarsOfTrain(trainKey);
+    }
+
+    public synchronized void removePath_Train_Loco_Cars(String opPathKey) {
+        List<String> trainsKeys = new LinkedList<>(this.paths.get(opPathKey).trainsKeys);
+        List<String> locomotiveNames = new LinkedList<>();
+        for (String trainsKey : trainsKeys) {
+            locomotiveNames.add(getLocoNameByTrain(trainsKey));
+            removeTrain(trainsKey);
+            removeCarsOfTrain(trainsKey);
+        }
+        for (String locomotiveName : locomotiveNames) {
+            removeLocomotive(locomotiveName);
+        }
+        removePath(opPathKey);
+
+    }
+
+    public synchronized void removeLine_Path_Train_Loco_Cars(String opLineKey) {
+        List<String> pathsKeysToRemove = new LinkedList<>();
+
+        for (Map.Entry<String, Path> pathEntry : this.paths.entrySet()){
+            if (pathEntry.getValue().linesKeys.contains(opLineKey)){
+                pathsKeysToRemove.add(pathEntry.getKey());
+            }
+        }
+        for (String pathKey : pathsKeysToRemove) {
+            removePath_Train_Loco_Cars(pathKey);
+            removePath(pathKey);
+        }
+        removeLine(opLineKey);
+    }
+
+    public synchronized void removeStation_Line_Path_Train_Loco_Cars(String opStationName){
+        List<String> linesToRemove = new LinkedList<>();
+        for (Map.Entry<String, Line> lineEntry : this.lines.entrySet()) {
+            if ((lineEntry.getKey().startsWith(opStationName) || lineEntry.getKey().endsWith(opStationName))) {
+                linesToRemove.add(lineEntry.getKey());
+            }
+        }
+        for (String line : linesToRemove) {
+            removeLine_Path_Train_Loco_Cars(line);
+        }
+
+        removeStation(opStationName);
+
+    }
+
+
+    /// przetestuj usuwanie wszytkiego :)
+
 
 }
 

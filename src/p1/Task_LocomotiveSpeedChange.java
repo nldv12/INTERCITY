@@ -1,11 +1,15 @@
 package p1;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Task_LocomotiveSpeedChange implements Runnable {
     RailSystem railSystem = RailSystem.getRailSystem();
     @Override
     public void run() {
         while (true) {
-            for (Locomotive locomotive : railSystem.locomotives.values()) {
+            List<Locomotive> allLocomotives = new LinkedList<>(railSystem.getLocomotivesValues());
+            for (Locomotive locomotive : allLocomotives) {
                 locomotive.randomSpeedChange(); // Wywołanie metody zmieniającej prędkość
                 if (locomotive.getCurrentSpeed() < 60)
                     locomotive.setCurrentSpeed(100);

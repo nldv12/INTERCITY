@@ -24,10 +24,10 @@ public class Main {
         Thread appState = new Thread(taskAppState);
 //        Thread watek2 = new Thread(task2);
 
-        locomotiveSpeedChange.start();
+//        locomotiveSpeedChange.start();
         cli.start();
         trainsMovement.start();
-//        alerts.start();
+        alerts.start();
         appState.start();
 //        watek2.start();
 

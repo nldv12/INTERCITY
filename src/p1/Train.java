@@ -9,8 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Train {
-    public Train(String key) {
+    public Train(String key, String homeStationName) {
         this.key = key;
+        this.homeStationName = homeStationName;
         this.isCargo = key.contains("CT");
 
     }
@@ -59,4 +60,7 @@ public class Train {
     }
 
 
+    public String getKey() {
+        return key;
+    }
 }

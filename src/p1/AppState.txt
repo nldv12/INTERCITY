@@ -1,0 +1,401 @@
+Pociąg: PT_0001
+Pociąg pokonał: 8 procent całej trasy
+Pociąg pokonał: 8 procent konkrektnego połączenia
+Ilość wagonów: 6
+Wagony:
+c4
+c1
+c6
+c3
+c2
+c5
+Pociąg jedize do stacji: BRIGHTON
+Lokomotywa: l1
+Stacja macierzysta: NORTHAMPTON
+Pociąg: CT_0001
+Pociąg pokonał: 8 procent całej trasy
+Pociąg pokonał: 8 procent konkrektnego połączenia
+Ilość wagonów: 9
+Wagony:
+c12
+c7
+c10
+c9
+c15
+c11
+c13
+c14
+c8
+Pociąg jedize do stacji: BRIGHTON
+Lokomotywa: l2
+Stacja macierzysta: NORTHAMPTON
+Pociąg: CT_00013
+Pociąg pokonał: 13 procent całej trasy
+Pociąg pokonał: 13 procent konkrektnego połączenia
+Ilość wagonów: 8
+Wagony:
+c192
+c186
+c193
+c190
+c189
+c188
+c187
+c191
+Pociąg jedize do stacji: KIRKBY
+Lokomotywa: l26
+Stacja macierzysta: ROTHERHAM
+Pociąg: PT_00013
+Pociąg pokonał: 13 procent całej trasy
+Pociąg pokonał: 13 procent konkrektnego połączenia
+Ilość wagonów: 8
+Wagony:
+c180
+c179
+c185
+c183
+c178
+c182
+c184
+c181
+Pociąg jedize do stacji: KIRKBY
+Lokomotywa: l25
+Stacja macierzysta: ROTHERHAM
+Pociąg: PT_0007
+Pociąg pokonał: 15 procent całej trasy
+Pociąg pokonał: 15 procent konkrektnego połączenia
+Ilość wagonów: 6
+Wagony:
+c83
+c88
+c85
+c84
+c87
+c86
+Pociąg jedize do stacji: SUNDERLAND
+Lokomotywa: l13
+Stacja macierzysta: POULTON
+Pociąg: CT_0007
+Pociąg pokonał: 15 procent całej trasy
+Pociąg pokonał: 15 procent konkrektnego połączenia
+Ilość wagonów: 7
+Wagony:
+c92
+c91
+c93
+c94
+c90
+c95
+c89
+Pociąg jedize do stacji: SUNDERLAND
+Lokomotywa: l14
+Stacja macierzysta: POULTON
+Pociąg: PT_0003
+Pociąg pokonał: 21 procent całej trasy
+Pociąg pokonał: 21 procent konkrektnego połączenia
+Ilość wagonów: 7
+Wagony:
+c28
+c30
+c29
+c31
+c32
+c27
+c33
+Pociąg jedize do stacji: CAMBRIDGE
+Lokomotywa: l5
+Stacja macierzysta: BRISTOL
+Pociąg: CT_0003
+Pociąg pokonał: 21 procent całej trasy
+Pociąg pokonał: 21 procent konkrektnego połączenia
+Ilość wagonów: 6
+Wagony:
+c38
+c35
+c34
+c36
+c37
+c39
+Pociąg jedize do stacji: CAMBRIDGE
+Lokomotywa: l6
+Stacja macierzysta: BRISTOL
+Pociąg: PT_0002
+Pociąg pokonał: 31 procent całej trasy
+Pociąg pokonał: 31 procent konkrektnego połączenia
+Ilość wagonów: 5
+Wagony:
+c17
+c16
+c19
+c18
+c20
+Pociąg jedize do stacji: READING
+Lokomotywa: l3
+Stacja macierzysta: SUNDERLAND
+Pociąg: CT_0002
+Pociąg pokonał: 31 procent całej trasy
+Pociąg pokonał: 31 procent konkrektnego połączenia
+Ilość wagonów: 6
+Wagony:
+c22
+c21
+c26
+c24
+c23
+c25
+Pociąg jedize do stacji: READING
+Lokomotywa: l4
+Stacja macierzysta: SUNDERLAND
+Pociąg: PT_0006
+Pociąg pokonał: 32 procent całej trasy
+Pociąg pokonał: 32 procent konkrektnego połączenia
+Ilość wagonów: 10
+Wagony:
+c70
+c69
+c68
+c74
+c73
+c75
+c72
+c67
+c71
+c76
+Pociąg jedize do stacji: LYTHAM
+Lokomotywa: l11
+Stacja macierzysta: WARRINGTON
+Pociąg: CT_0006
+Pociąg pokonał: 32 procent całej trasy
+Pociąg pokonał: 32 procent konkrektnego połączenia
+Ilość wagonów: 6
+Wagony:
+c81
+c80
+c82
+c77
+c79
+c78
+Pociąg jedize do stacji: LYTHAM
+Lokomotywa: l12
+Stacja macierzysta: WARRINGTON
+Pociąg: CT_00012
+Pociąg pokonał: 37 procent całej trasy
+Pociąg pokonał: 37 procent konkrektnego połączenia
+Ilość wagonów: 8
+Wagony:
+c170
+c176
+c174
+c173
+c172
+c171
+c175
+c177
+Pociąg jedize do stacji: HOLMFIRTH
+Lokomotywa: l24
+Stacja macierzysta: PLYMOUTH
+Pociąg: PT_00012
+Pociąg pokonał: 37 procent całej trasy
+Pociąg pokonał: 37 procent konkrektnego połączenia
+Ilość wagonów: 9
+Wagony:
+c162
+c163
+c169
+c165
+c161
+c166
+c164
+c167
+c168
+Pociąg jedize do stacji: HOLMFIRTH
+Lokomotywa: l23
+Stacja macierzysta: PLYMOUTH
+Pociąg: PT_0008
+Pociąg pokonał: 39 procent całej trasy
+Pociąg pokonał: 39 procent konkrektnego połączenia
+Ilość wagonów: 9
+Wagony:
+c100
+c103
+c102
+c99
+c101
+c97
+c104
+c98
+c96
+Pociąg jedize do stacji: LEEDS
+Lokomotywa: l15
+Stacja macierzysta: OLDHAM
+Pociąg: CT_0008
+Pociąg pokonał: 39 procent całej trasy
+Pociąg pokonał: 39 procent konkrektnego połączenia
+Ilość wagonów: 9
+Wagony:
+c107
+c108
+c105
+c110
+c109
+c113
+c112
+c106
+c111
+Pociąg jedize do stacji: LEEDS
+Lokomotywa: l16
+Stacja macierzysta: OLDHAM
+Pociąg: CT_00010
+Pociąg pokonał: 44 procent całej trasy
+Pociąg pokonał: 4 procent konkrektnego połączenia
+Ilość wagonów: 6
+Wagony:
+c143
+c144
+c139
+c142
+c141
+c140
+Pociąg jedize do stacji: READING
+Lokomotywa: l20
+Stacja macierzysta: LYTHAM
+Pociąg: PT_00010
+Pociąg pokonał: 44 procent całej trasy
+Pociąg pokonał: 4 procent konkrektnego połączenia
+Ilość wagonów: 10
+Wagony:
+c129
+c135
+c138
+c131
+c130
+c137
+c134
+c133
+c132
+c136
+Pociąg jedize do stacji: READING
+Lokomotywa: l19
+Stacja macierzysta: LYTHAM
+Pociąg: PT_0004
+Pociąg pokonał: 64 procent całej trasy
+Pociąg pokonał: 32 procent konkrektnego połączenia
+Ilość wagonów: 5
+Wagony:
+c41
+c43
+c44
+c40
+c42
+Pociąg stoi na stacji: Optional[ROCHDALE]
+Lokomotywa: l7
+Stacja macierzysta: HUDDERSFIELD
+Pociąg: CT_0004
+Pociąg pokonał: 64 procent całej trasy
+Pociąg pokonał: 32 procent konkrektnego połączenia
+Ilość wagonów: 6
+Wagony:
+c50
+c46
+c47
+c45
+c49
+c48
+Pociąg stoi na stacji: Optional[ROCHDALE]
+Lokomotywa: l8
+Stacja macierzysta: HUDDERSFIELD
+Pociąg: PT_0009
+Pociąg pokonał: 84 procent całej trasy
+Pociąg pokonał: 84 procent konkrektnego połączenia
+Ilość wagonów: 7
+Wagony:
+c119
+c117
+c114
+c116
+c115
+c120
+c118
+Pociąg jedize do stacji: CARDIFF
+Lokomotywa: l17
+Stacja macierzysta: WIDNES
+Pociąg: CT_0009
+Pociąg pokonał: 84 procent całej trasy
+Pociąg pokonał: 84 procent konkrektnego połączenia
+Ilość wagonów: 8
+Wagony:
+c126
+c124
+c127
+c122
+c125
+c121
+c123
+c128
+Pociąg jedize do stacji: CARDIFF
+Lokomotywa: l18
+Stacja macierzysta: WIDNES
+Pociąg: PT_0005
+Pociąg pokonał: 94 procent całej trasy
+Pociąg pokonał: 94 procent konkrektnego połączenia
+Ilość wagonów: 7
+Wagony:
+c53
+c52
+c56
+c55
+c54
+c51
+c57
+Pociąg jedize do stacji: BATH
+Lokomotywa: l9
+Stacja macierzysta: COCKERMOUTH
+Pociąg: CT_0005
+Pociąg pokonał: 94 procent całej trasy
+Pociąg pokonał: 94 procent konkrektnego połączenia
+Ilość wagonów: 9
+Wagony:
+c66
+c58
+c60
+c65
+c59
+c61
+c63
+c62
+c64
+Pociąg jedize do stacji: BATH
+Lokomotywa: l10
+Stacja macierzysta: COCKERMOUTH
+Pociąg: CT_00011
+Pociąg pokonał: 99 procent całej trasy
+Pociąg pokonał: 99 procent konkrektnego połączenia
+Ilość wagonów: 8
+Wagony:
+c159
+c158
+c153
+c160
+c154
+c156
+c155
+c157
+Pociąg jedize do stacji: NORTHUMBERLAND
+Lokomotywa: l22
+Stacja macierzysta: SKELMERSDALE
+Pociąg: PT_00011
+Pociąg pokonał: 99 procent całej trasy
+Pociąg pokonał: 99 procent konkrektnego połączenia
+Ilość wagonów: 8
+Wagony:
+c146
+c148
+c150
+c149
+c152
+c147
+c151
+c145
+Pociąg jedize do stacji: NORTHUMBERLAND
+Lokomotywa: l21
+Stacja macierzysta: SKELMERSDALE
