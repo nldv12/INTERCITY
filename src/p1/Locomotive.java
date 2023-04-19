@@ -12,6 +12,8 @@ public class Locomotive {
         this.id = this.hashCode();
         this.name = name;
         this.homeStation = homeStation;
+
+
     }
 
     // moje pola --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -31,7 +33,7 @@ public class Locomotive {
     private String sourceStation;
     private String destinationStation;
     int id;
-    private double currentSpeed = 100;
+    private double currentSpeed = 220;
     private String pathKey;
     List<String> linesKeys = new LinkedList<>();
 
@@ -66,8 +68,9 @@ public class Locomotive {
             currentSpeed -= decrease;
         }
     }
-
+// on line to station
     public void moveLocomotiveOnLine(long now, long deltaTime) {
+
         double vPerMilis = currentSpeed / 3600000; // Obliczenie dystansu pokonanego za 1 milisekundę
         double deltaDistance = vPerMilis * deltaTime;
         this.distancePassedLocal += deltaDistance;
@@ -82,10 +85,6 @@ public class Locomotive {
             currentStation = Optional.of(nextStation);
             currentLineKey = Optional.empty();
             currentArrivalTime = now;
-            if (linesKeys.size() == 0){
-                System.out.println();
-            }
-            linesKeys.remove(0);
             setMoving(false);
             if (currentStation.equals(Optional.of(destinationStation))) {
                 reverseLines();
@@ -94,10 +93,9 @@ public class Locomotive {
                 linesKeys = new LinkedList<>(railSystem.getPathLinesByPathKey(pathKey));
                 distancePassedTotal = 0;
             }
-
         }
     }
-
+    // from station to line
     public void moveLocomotiveOnStation(long now, long deltaTime) {
 
         boolean timeToGo = false;
@@ -108,12 +106,9 @@ public class Locomotive {
         } else {
             timeToGo = now - currentArrivalTime > 2000;
         }
-        if (linesKeys.size() == 0){
-            System.out.println();
-        }
-
         String lineKey = linesKeys.get(0);
         if (timeToGo && RailSystem.getRailSystem().isLineEmpty(lineKey)) {
+            linesKeys.remove(0);
             currentStation = Optional.empty();
             currentLineKey = Optional.of(lineKey);
             setMoving(true);
@@ -122,12 +117,19 @@ public class Locomotive {
     }
 
     public synchronized void moveLocomotive(long now, long deltaTime) {
+
         if (currentStation.isPresent()) {
             moveLocomotiveOnStation(now, deltaTime);
         } else if (currentLineKey.isPresent()) {
             moveLocomotiveOnLine(now, deltaTime);
         }
     }
+
+
+
+
+
+
 
     // Getters ------------------------------------------------------------------------------------------------------------------------------------
     public String getName() {
@@ -194,6 +196,12 @@ public class Locomotive {
         return currentStation;
     }
 
+
+
+
+
+
+
     // Setters --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     public synchronized void setSourceStation(String sourceStation) {
         this.sourceStation = sourceStation;
@@ -227,8 +235,6 @@ public class Locomotive {
     public synchronized void setTrainKey(String trainKey) {
         this.trainKey = trainKey;
     }
-
-
     public synchronized void setCurrentLineKey(Optional<String> currentLineKey) {
         this.currentLineKey = currentLineKey;
     }

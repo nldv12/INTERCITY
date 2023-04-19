@@ -195,7 +195,7 @@ public class RailSystem {
 
 
         // wykonanie tego kodu spowoduje utworzenie większej liczby połączeń od każdej stacji
-        for (int n = 0; n < 1; n++) {
+        for (int n = 0; n < 7; n++) {
             // Tworzenie połączenia od każdej stacji
             for (int i = 0; i < stationEntries.size(); i++) {
                 String key1 = stationEntries.get(i).getKey();
@@ -449,7 +449,7 @@ public class RailSystem {
         }
     }
 
-    public void defaultRailSystemFill() {
+    public void defaultRailSystemFill(int numberOfTrains) {
         Random random = new Random();
 
 
@@ -490,81 +490,64 @@ public class RailSystem {
         int locoNumber = 1;
         int carNumber = 1;
 
+        List<String> pathKeys = new LinkedList<>(railSystem.getPathsKeys());
 
-        LinkedList<String> first13stations = new LinkedList<>();
-        int countStation = 0;
-        for (Station station : this.stations.values()) {
-            first13stations.add(station.name);
-            countStation++;
-            if (countStation == 13) {
-                break;
-            }
-        }
+        for (int i = 0; i < numberOfTrains; i++) {
+            String[] pathKey = pathKeys.get(i).split("__");
 
-        LinkedList<String> first13paths = new LinkedList<>();
-        int countPath = 0;
-        for (Path path : this.paths.values()) {
-            first13paths.add(path.getPathKey());
-            countPath++;
-            if (countPath == 13) {
-                break;
-            }
-        }
-
-        for (int i = 0; i < 13; i++) {
-            String[] pathKey = first13paths.get(i).split("__");
             // Passenger train
             String ptTrainName = "PT_000" + (pTrainNumber++);
-            this.addTrain(ptTrainName, first13stations.get(i));
+            this.addTrain(ptTrainName, pathKey[0]);
             String ptLocoName = "l" + (locoNumber++);
-            this.locomotives.put(ptLocoName, new Locomotive(ptLocoName, first13stations.get(i)));
+            this.locomotives.put(ptLocoName, new Locomotive(ptLocoName, pathKey[0]));
             this.trains.get(ptTrainName).setlocomotiveName(ptLocoName);
             this.locomotives.get(ptLocoName).setTrainKey(ptTrainName);
             // do każdego pociągu 1 trasa
-            this.locomotives.get(ptLocoName).setSourceStation(first13stations.get(i));
+            this.locomotives.get(ptLocoName).setSourceStation(pathKey[0]);
             this.locomotives.get(ptLocoName).setDestinationStation(pathKey[1]);
-            this.locomotives.get(ptLocoName).setPathKey(first13paths.get(i));
-            this.locomotives.get(ptLocoName).setCurrentStation(Optional.of(first13stations.get(i)));
-            this.paths.get(first13paths.get(i)).trainsKeys.add(ptTrainName);
-            // do każdego pociągu 5 wagonówghg
+            this.locomotives.get(ptLocoName).setPathKey(pathKeys.get(i));
 
+            this.locomotives.get(ptLocoName).setCurrentStation(Optional.of(pathKey[0]));
+            this.paths.get(pathKeys.get(i)).trainsKeys.add(ptTrainName);
+
+            // do każdego pociągu 5 wagonówghg
             int carsNumber = random.nextInt(10 - 5 + 1) + 5;
             for (int j = 0; j < carsNumber; j++) {
                 String pCarName = "c" + (carNumber++);
-                this.cars.put(pCarName, new LuggagePostCar(pCarName, first13stations.get(i)));
+                this.cars.put(pCarName, new LuggagePostCar(pCarName, pathKey[0]));
                 int weight = random.nextInt(100 - 40 + 1) + 40;
                 this.cars.get(pCarName).setGrossWeight(weight);
-                this.cars.get(pCarName).setHomeStation(first13stations.get(i));
+                this.cars.get(pCarName).setHomeStation(pathKey[0]);
                 this.cars.get(pCarName).setTrainKey(ptTrainName);
                 this.trains.get(ptTrainName).carsNames.add(pCarName);
             }
+
+
             // Cargo train
-            String ctTrainName = "CT_000" + (cTrainNumber++);
-            this.addTrain(ctTrainName, first13stations.get(i));
-            String ctLocoName = "l" + (locoNumber++);
-            this.locomotives.put(ctLocoName, new Locomotive(ctLocoName, first13stations.get(i)));
-            this.trains.get(ctTrainName).setlocomotiveName(ctLocoName);
-            this.locomotives.get(ctLocoName).setTrainKey(ctTrainName);
-            // do każdego pociągu 1 trasa
-            this.locomotives.get(ctLocoName).setSourceStation(first13stations.get(i));
-            this.locomotives.get(ctLocoName).setDestinationStation(pathKey[1]);
-            this.locomotives.get(ctLocoName).setPathKey(first13paths.get(i));
-            this.locomotives.get(ctLocoName).setCurrentStation(Optional.of(first13stations.get(i)));
-            this.paths.get(first13paths.get(i)).trainsKeys.add(ctTrainName);
-            carsNumber = random.nextInt(10 - 5 + 1) + 5;
-            for (int j = 0; j < carsNumber; j++) {
-                String cCarName = "c" + (carNumber++);
-                this.cars.put(cCarName, new BasicCargoCar(cCarName, first13stations.get(i)));
-                int weight = random.nextInt(100 - 40 + 1) + 40;
-                this.cars.get(cCarName).setGrossWeight(weight);
-                this.cars.get(cCarName).setHomeStation(first13stations.get(i));
-                this.cars.get(cCarName).setTrainKey(ctTrainName);
-                this.trains.get(ctTrainName).carsNames.add(cCarName);
-
-            }
+//            String ctTrainName = "CT_000" + (cTrainNumber++);
+//            this.addTrain(ctTrainName, pathKey[0]);
+//            String ctLocoName = "l" + (locoNumber++);
+//            this.locomotives.put(ctLocoName, new Locomotive(ctLocoName, pathKey[0]));
+//            this.trains.get(ctTrainName).setlocomotiveName(ctLocoName);
+//            this.locomotives.get(ctLocoName).setTrainKey(ctTrainName);
+//            // do każdego pociągu 1 trasa
+//            this.locomotives.get(ctLocoName).setSourceStation(pathKey[0]);
+//            this.locomotives.get(ctLocoName).setDestinationStation(pathKey[1]);
+//            this.locomotives.get(ctLocoName).setPathKey(pathKeys.get(i));
+//            this.locomotives.get(ctLocoName).setCurrentStation(Optional.of(pathKey[0]));
+//            this.paths.get(pathKeys.get(i)).trainsKeys.add(ctTrainName);
+//            carsNumber = random.nextInt(10 - 5 + 1) + 5;
+//            for (int j = 0; j < carsNumber; j++) {
+//                String cCarName = "c" + (carNumber++);
+//                this.cars.put(cCarName, new BasicCargoCar(cCarName, pathKey[0]));
+//                int weight = random.nextInt(100 - 40 + 1) + 40;
+//                this.cars.get(cCarName).setGrossWeight(weight);
+//                this.cars.get(cCarName).setHomeStation(pathKey[0]);
+//                this.cars.get(cCarName).setTrainKey(ctTrainName);
+//                this.trains.get(ctTrainName).carsNames.add(cCarName);
+//
+//            }
         }
-
-
     }
 
 

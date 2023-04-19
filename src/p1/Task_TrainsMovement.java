@@ -9,7 +9,6 @@ public class Task_TrainsMovement implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println();
             long prevTime = System.currentTimeMillis();
             int counter = 0;
             while (true) {
@@ -17,9 +16,8 @@ public class Task_TrainsMovement implements Runnable {
 //                if (counter == 99) System.out.println();
                 counter++;
                 long now = System.currentTimeMillis();
-                long deltaTime = now - prevTime;
-//                long deltaTime = 100;
-
+//                long deltaTime = now - prevTime;
+                long deltaTime = 800;
                 List<Locomotive> allLocomotives = new LinkedList<>(railSystem.getLocomotivesValues());
                 for (Locomotive locomotive : allLocomotives) {
                     locomotive.moveLocomotive(now, deltaTime); // Przesunięcie lokomotywy na nową pozycję

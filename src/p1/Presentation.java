@@ -4,6 +4,7 @@ import p1.Cars.Car;
 
 public class Presentation {
     public static void main(String[] args) {
+        System.out.println("hi");
         System.out.println("Presentation");
         System.out.println("""
                 Tutaj można znaleźć sporą część funkcjonalności które posiada ten program, 
@@ -21,7 +22,7 @@ public class Presentation {
 
         System.out.println("Domyślnie można wypełnić railSystem jakimiś obiektami zeby zobaczyć jak to wszytko funkcjonuje");
         railSystem.addDefaultLocations();// dodajemy 100 przykłądowych stacji
-        railSystem.defaultRailSystemFill(); // tworzymy trasy, linie, i 26 pociągów z wagonami
+        railSystem.defaultRailSystemFill(25); // tworzymy trasy, linie, i 25 pociągów z wagonami
 
         System.out.println("Oczywiście można tworzyć ręcznie każdy z takich obiektów");
 

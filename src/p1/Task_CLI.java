@@ -33,7 +33,7 @@ public class Task_CLI implements Runnable {
         commandlist();
         while (true) {
             try {
-                if (System.in.available() > 0) {
+                if (System.in.available() > 0) {// sprawdzenie czy przycisk jest wciśnięty
                     char c = (char) reader.read();
                     if (c == 'r') {
                         System.out.println("Wciśnąłeś r");
@@ -330,7 +330,6 @@ public class Task_CLI implements Runnable {
         boolean keySuccess = false;
         // Interfejs klucza pociągu
         System.out.println("Podaj identyfikator pociągu (klucz)");
-        System.out.println();
         System.out.println("""
                 Przykład:
                 Cargo train: CT_0001 - (pociąg ciężarowy)
@@ -348,7 +347,6 @@ public class Task_CLI implements Runnable {
 
 
             key = sc.nextLine();
-            System.out.println();
 
             // walidacja do pola key
             if (key.length() != 7 || !key.contains("_"))

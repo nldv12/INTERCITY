@@ -20,10 +20,10 @@ public class Task_Alerts implements Runnable{
                 /// w zadaniu tego niema można usunąć wtedy komunkat będzie się pojawiać cały czas
 
             }
-            while (! railSystem.alerts.isEmpty()) {
-                String alert = railSystem.alerts.poll();
-                System.out.println(alert);
-            }
+//            while (! railSystem.alerts.isEmpty()) {
+//                String alert = railSystem.alerts.poll();
+////                System.out.println(alert);
+//            }
 
 //            for (String alert : railSystem.alerts) {
 //                System.out.println(alert);

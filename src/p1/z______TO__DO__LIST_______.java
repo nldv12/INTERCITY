@@ -13,6 +13,8 @@ public class z______TO__DO__LIST_______ {
     więcej połaczęń (linii)
     150 procent trasy pokonano
 
+
+
    do poprawy:
     ----- usuwanie elementów (exceptions)
     station

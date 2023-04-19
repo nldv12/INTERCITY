@@ -5,7 +5,7 @@ public class Main {
         System.out.println("Main");
         RailSystem railSystem = RailSystem.getRailSystem();
 //        railSystem.filrailsTest();
-        railSystem.defaultRailSystemFill();
+        railSystem.defaultRailSystemFill(1);
 
 //        railSystem.alerts.add("Alert 1");
 //        railSystem.alerts.add("Alert 2");
@@ -24,12 +24,13 @@ public class Main {
         Thread appState = new Thread(taskAppState);
 //        Thread watek2 = new Thread(task2);
 
-//        locomotiveSpeedChange.start();
+        locomotiveSpeedChange.start();
         cli.start();
         trainsMovement.start();
-        alerts.start();
+//        alerts.start();
         appState.start();
 //        watek2.start();
+        System.out.println();
 
 //thread with runable
     }

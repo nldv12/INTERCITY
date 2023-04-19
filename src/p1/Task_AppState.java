@@ -14,6 +14,7 @@ public class Task_AppState implements Runnable {
         String plik = "E:\\Mój dysk\\JAVA\\___GUI___\\__PROJECTS__\\src\\p1\\AppState.txt";
 
 
+
         FileOutputStream fos = null;
         PrintWriter pw = null;
         try {
