@@ -5,15 +5,16 @@ import p1.Enums.Shippers;
 import java.util.Optional;
 
 public abstract class Car {
-    public Car(String name,String homeStation) {
+    public Car(String name,boolean isCargo, String homeStation) {
         this.name = name;
+        this.isCargo = isCargo;
         this.id = this.hashCode();
         this.homeStation = homeStation;
         this.grossWeight = this.netWeight;
     }
 
     protected String name;
-    String type;
+    public String type;
     String homeStation = "";
     protected boolean isCargo;
     protected int netWeight;
@@ -64,6 +65,7 @@ public abstract class Car {
     public String getName() {
         return name;
     }
+
 
 
     @Override

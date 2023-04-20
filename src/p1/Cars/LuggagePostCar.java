@@ -1,8 +1,8 @@
 package p1.Cars;
 
 public class LuggagePostCar extends PostCar{
-    public LuggagePostCar(String name,String homeStation) {
-        super(name, homeStation);
+    public LuggagePostCar(String name,boolean isCargo, String homeStation) {
+        super(name,isCargo,homeStation);
         this.name = name;
         this.type = "LuggagePostCar";
         this.id = this.hashCode();

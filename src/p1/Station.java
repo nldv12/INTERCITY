@@ -13,8 +13,6 @@ public class Station {
 
 
     ArrayList<Train> listOfTrainsStopping;
-
-    ;
     public void showTrainsNamesHome(){
         for (String train : trainsNamesHome) {
             System.out.println(train);

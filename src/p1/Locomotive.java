@@ -33,7 +33,7 @@ public class Locomotive {
     private String sourceStation;
     private String destinationStation;
     int id;
-    private double currentSpeed = 220;
+    private double currentSpeed = 100;
     private String pathKey;
     List<String> linesKeys = new LinkedList<>();
 
@@ -74,7 +74,6 @@ public class Locomotive {
         double vPerMilis = currentSpeed / 3600000; // Obliczenie dystansu pokonanego za 1 milisekundę
         double deltaDistance = vPerMilis * deltaTime;
         this.distancePassedLocal += deltaDistance;
-        this.distancePassedTotal += deltaDistance;
         if (distancePassedLocal >= railSystem.getLineByKey(currentLineKey.get()).getDistance()) {
             int totalPathDistance = railSystem.paths.get(getPathKey()).getTotalPathDistance();
             if (distancePassedTotal > totalPathDistance)
@@ -93,6 +92,8 @@ public class Locomotive {
                 linesKeys = new LinkedList<>(railSystem.getPathLinesByPathKey(pathKey));
                 distancePassedTotal = 0;
             }
+        }else {
+            this.distancePassedTotal += deltaDistance;
         }
     }
     // from station to line
@@ -216,9 +217,16 @@ public class Locomotive {
     }
 
     public synchronized void setPathKey(String pathKey) {
-        linesKeys = new LinkedList<String>(RailSystem.getRailSystem().getPathByKey(pathKey).linesKeys);
         this.pathKey = pathKey;
     }
+    public synchronized void setLinesKeys(String pathKey) {
+        this.linesKeys = new LinkedList<String>(RailSystem.getRailSystem().getPathByKey(pathKey).linesKeys);
+    }
+    public synchronized void setLinesKeysByList(LinkedList<String> linesKeys) {
+        this.linesKeys.addAll(linesKeys);
+    }
+
+
 
     public synchronized void setMoving(boolean moving) {
         isMoving = moving;

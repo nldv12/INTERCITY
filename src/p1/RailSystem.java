@@ -18,7 +18,6 @@ public class RailSystem {
     private RailSystem() {
         addDefaultLocations();
         stationsAndLinks();
-
     }
 
 //    public Queue<String> alerts = new LinkedList<>();
@@ -28,6 +27,12 @@ public class RailSystem {
 //    Map<String, Car> cars = new LinkedHashMap<>();
 //    Map<String, Line> lines = new LinkedHashMap<>();
 //    Map<String, Path> paths = new LinkedHashMap<>();
+
+
+    ConcurrentHashMap<String, Locomotive> notReadyLocomotives = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Train> notReadyTrains = new ConcurrentHashMap<>();
+
+
 
     public Queue<String> alerts = new LinkedList<>(); //???? też ConcurrentHashMap?
     ConcurrentHashMap<String, Station> stations = new ConcurrentHashMap<>();
@@ -46,9 +51,15 @@ public class RailSystem {
     public synchronized Map<String, Locomotive> getLocomotives() {
         return locomotives;
     }
+    public synchronized Map<String, Locomotive> getNotReadyLocomotives() {
+        return notReadyLocomotives;
+    }
 
     public synchronized Map<String, Train> getTrains() {
         return trains;
+    }
+    public synchronized Map<String, Train> getNotReadyTrains() {
+        return notReadyTrains;
     }
 
     public synchronized Map<String, Car> getCars() {
@@ -159,8 +170,16 @@ public class RailSystem {
         return this.locomotives.get(locomotiveName);
     }
 
+    public synchronized Locomotive getNotReadyLocomotive(String locomotiveName) {
+        return this.notReadyLocomotives.get(locomotiveName);
+    }
+
     public synchronized Train getTrain(String trainKey) {
         return this.trains.get(trainKey);
+    }
+
+    public synchronized Train getNotReadyTrain(String trainKey) {
+        return this.notReadyTrains.get(trainKey);
     }
 
     public synchronized Car getCar(String carName) {
@@ -179,6 +198,13 @@ public class RailSystem {
     public synchronized int getCarsCountByTrain(String trainKey) {
         return this.trains.get(trainKey).carsNames.size();
     }
+
+
+
+
+
+
+
 
     // KEY METHODS
     void stationsAndLinks() {
@@ -282,6 +308,15 @@ public class RailSystem {
 
     }
 
+
+    public synchronized void prepareBeforeTrip(String locomotiveName, String trainKey) {
+        railSystem.locomotives.get(locomotiveName).setHomeStation("");
+        for (Car car : railSystem.getCars().values()) {
+            if (car.getTrainKey().equals(trainKey)){
+                car.setHomeStation("");
+            }
+        }
+    }
 
     //    void filrailsTest (){
 //        this.locomotives.put("l1",new Locomotive("l1","LONDON"));
@@ -450,6 +485,7 @@ public class RailSystem {
     }
 
     public void defaultRailSystemFill(int numberOfTrains) {
+
         Random random = new Random();
 
 
@@ -506,6 +542,7 @@ public class RailSystem {
             this.locomotives.get(ptLocoName).setSourceStation(pathKey[0]);
             this.locomotives.get(ptLocoName).setDestinationStation(pathKey[1]);
             this.locomotives.get(ptLocoName).setPathKey(pathKeys.get(i));
+            this.locomotives.get(ptLocoName).setLinesKeys(pathKeys.get(i));
 
             this.locomotives.get(ptLocoName).setCurrentStation(Optional.of(pathKey[0]));
             this.paths.get(pathKeys.get(i)).trainsKeys.add(ptTrainName);
@@ -514,7 +551,7 @@ public class RailSystem {
             int carsNumber = random.nextInt(10 - 5 + 1) + 5;
             for (int j = 0; j < carsNumber; j++) {
                 String pCarName = "c" + (carNumber++);
-                this.cars.put(pCarName, new LuggagePostCar(pCarName, pathKey[0]));
+                this.cars.put(pCarName, new LuggagePostCar(pCarName, false, pathKey[0]));
                 int weight = random.nextInt(100 - 40 + 1) + 40;
                 this.cars.get(pCarName).setGrossWeight(weight);
                 this.cars.get(pCarName).setHomeStation(pathKey[0]);
@@ -559,51 +596,80 @@ public class RailSystem {
     public synchronized void addTrain(String key, String homeStationName) {
         this.trains.put(key, new Train(key, homeStationName));
     }
+    public synchronized void userAddTrain(String trainKey, String homeStationName,String locomotiveName, LinkedList<String> trainCars) {
+        this.notReadyTrains.put(trainKey, new Train(trainKey, homeStationName));
+        for (String car : trainCars) {
+            railSystem.getNotReadyTrain(trainKey).carsNames.add(car);
+        }
+        railSystem.getNotReadyTrain(trainKey).setlocomotiveName(locomotiveName);
+        railSystem.getNotReadyLocomotive(locomotiveName).setHomeStation(homeStationName);
+        railSystem.getNotReadyLocomotive(locomotiveName).setTrainKey(trainKey);
+
+    }
 
     public synchronized void addLocomotive(String name, String homeStationName) {
         this.locomotives.put(name, new Locomotive(name, homeStationName));
     }
 
+    public synchronized void addNotReadyLocomotive(String name, String homeStationName) {
+        this.notReadyLocomotives.put(name, new Locomotive(name, homeStationName));
+    }
+
     public synchronized void addCar(String opCarName, boolean opCarIsCargo, String carType, String opStationName) {
         if (opCarIsCargo) {
             switch (carType) {
-                case "1" -> this.cars.put(opCarName, new BasicCargoCar(opCarName, opStationName));
-                case "2" -> this.cars.put(opCarName, new ExplosiveMaterialCargoCar(opCarName, opStationName));
-                case "3" -> this.cars.put(opCarName, new GasMaterialCargoCar(opCarName, opStationName));
-                case "4" -> this.cars.put(opCarName, new HeavyCargoCar(opCarName, opStationName));
-                case "5" -> this.cars.put(opCarName, new LiquidMaterialCargoCar(opCarName, opStationName));
-                case "6" -> this.cars.put(opCarName, new LiquidToxicMaterialCargoCar(opCarName, opStationName));
-                case "7" -> this.cars.put(opCarName, new RefrigeratedCargoCar(opCarName, opStationName));
-                case "8" -> this.cars.put(opCarName, new ToxicMaterialCargoCar(opCarName, opStationName));
+                case "1" -> this.cars.put(opCarName, new BasicCargoCar(opCarName, true, opStationName));
+                case "2" -> this.cars.put(opCarName, new ExplosiveMaterialCargoCar(opCarName, true, opStationName));
+                case "3" -> this.cars.put(opCarName, new GasMaterialCargoCar(opCarName, true, opStationName));
+                case "4" -> this.cars.put(opCarName, new HeavyCargoCar(opCarName, true, opStationName));
+                case "5" -> this.cars.put(opCarName, new LiquidMaterialCargoCar(opCarName, true, opStationName));
+                case "6" -> this.cars.put(opCarName, new LiquidToxicMaterialCargoCar(opCarName, true, opStationName));
+                case "7" -> this.cars.put(opCarName, new RefrigeratedCargoCar(opCarName, true, opStationName));
+                case "8" -> this.cars.put(opCarName, new ToxicMaterialCargoCar(opCarName, true, opStationName));
                 default -> System.out.println("Err");
             }
         } else {
             switch (carType) {
-                case "1" -> this.cars.put(opCarName, new LuggagePostCar(opCarName, opStationName));
-                case "2" -> this.cars.put(opCarName, new PassengerCar(opCarName, opStationName));
-                case "3" -> this.cars.put(opCarName, new PostCar(opCarName, opStationName));
-                case "4" -> this.cars.put(opCarName, new RestaurantCar(opCarName, opStationName));
+                case "1" -> this.cars.put(opCarName, new LuggagePostCar(opCarName, false, opStationName));
+                case "2" -> this.cars.put(opCarName, new PassengerCar(opCarName, false,opStationName));
+                case "3" -> this.cars.put(opCarName, new PostCar(opCarName, false,opStationName));
+                case "4" -> this.cars.put(opCarName, new RestaurantCar(opCarName, false,opStationName));
                 default -> System.out.println("Err");
             }
         }
     }
 
-    public synchronized void addPath(String oplLocomotiveName, String opSourceStation, String opPathKey, String opStationName,
+    public synchronized void addPath(String oplLocomotiveName, String opPathKey, String opStationName,
                                      LinkedList<String> opPathLines, String opTrainKey) {
-        // stacja końcowa lokomotywy - ustalamy
-        this.locomotives.get(oplLocomotiveName).setDestinationStation(opStationName);
-        String pathKey = opSourceStation + "__" + opStationName;
-        this.locomotives.get(oplLocomotiveName).setPathKey(pathKey);
-        opPathKey = pathKey;
+
+        LinkedList<String> lines = new LinkedList<>(opPathLines);
+
+
+        String[] cities = opPathKey.split("__");
+
+        this.notReadyLocomotives.get(oplLocomotiveName).setDestinationStation(cities[1]);
+        this.notReadyLocomotives.get(oplLocomotiveName).setPathKey(opPathKey);
+        this.notReadyLocomotives.get(oplLocomotiveName).setLinesKeysByList(lines);
+        this.notReadyLocomotives.get(oplLocomotiveName).setCurrentStation(Optional.of(opStationName));
+        this.notReadyLocomotives.get(oplLocomotiveName).setSourceStation(opStationName);
+
         // tworzymy obiekt path
         int distance = 0;
         for (Map.Entry<String, Line> line : this.lines.entrySet()) {
-            if (opPathLines.contains(line.getKey())) {
+            if (lines.contains(line.getKey())) {
                 distance += line.getValue().getDistance();
             }
         }
-        this.paths.put(pathKey, new Path(pathKey, opPathLines, distance));
-        this.paths.get(pathKey).trainsKeys.add(opTrainKey);
+        this.paths.put(opPathKey, new Path(opPathKey, lines, distance));
+        this.paths.get(opPathKey).trainsKeys.add(opTrainKey);
+
+        Train train = railSystem.getNotReadyTrain(opTrainKey);
+        Locomotive locomotive = railSystem.getNotReadyLocomotive(train.getLocomotiveName());
+        this.trains.put(opTrainKey, train);
+        this.notReadyTrains.remove(opTrainKey);
+        this.locomotives.put(train.getLocomotiveName(), locomotive);
+        this.notReadyLocomotives.remove(train.getLocomotiveName());
+
     }
 
     public synchronized void addLine(String newLineKey, String startStation, String endStation, int distance) {

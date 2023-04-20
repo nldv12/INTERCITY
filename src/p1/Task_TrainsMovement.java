@@ -20,7 +20,11 @@ public class Task_TrainsMovement implements Runnable {
                 long deltaTime = 800;
                 List<Locomotive> allLocomotives = new LinkedList<>(railSystem.getLocomotivesValues());
                 for (Locomotive locomotive : allLocomotives) {
-                    locomotive.moveLocomotive(now, deltaTime); // Przesunięcie lokomotywy na nową pozycję
+                    if (locomotive.getPathKey() != null){
+                        railSystem.prepareBeforeTrip(locomotive.name, locomotive.getTrainKey());
+                        locomotive.moveLocomotive(now, deltaTime); // Przesunięcie lokomotywy na nową pozycję
+                    }
+
                 }
                 prevTime = now;
                 Thread.sleep(1);
@@ -32,6 +36,9 @@ public class Task_TrainsMovement implements Runnable {
         }
 
     }
+
+
+
 
 }
 

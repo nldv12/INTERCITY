@@ -14,6 +14,7 @@ public class Task_LocomotiveSpeedChange implements Runnable {
             List<Locomotive> allLocomotives = new LinkedList<>(railSystem.getLocomotivesValues());
             for (Locomotive locomotive : allLocomotives) {
                 locomotive.randomSpeedChange(); // Wywołanie metody zmieniającej prędkość
+//                System.out.println(locomotive.getCurrentSpeed());
                 try {
                     checkRailroadHazard(locomotive);
                 } catch (RailroadHazardException e) {

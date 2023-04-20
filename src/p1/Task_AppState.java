@@ -13,15 +13,13 @@ public class Task_AppState implements Runnable {
     public void run() {
         String plik = "E:\\Mój dysk\\JAVA\\___GUI___\\__PROJECTS__\\src\\p1\\AppState.txt";
 
-
-
         FileOutputStream fos = null;
         PrintWriter pw = null;
         try {
             int counter = 0;
             clearFile(plik);
             while (true) {
-                if (counter == 10) {
+                if (counter == 50) {
                     clearFile(plik);
                     counter = 0;
                 }
@@ -31,6 +29,7 @@ public class Task_AppState implements Runnable {
                 pw = new PrintWriter(fos);
 
                 List<Train> sortedTrains = new LinkedList<>(railSystem.getTrainsValues());
+
                 sortedTrains.sort(Comparator.comparingDouble(train -> railSystem.getLocomotive(train.getLocomotiveName()).getDistancePassedPercantageTotal()));
 
                 List<String> listedTrainsKeys = new LinkedList<>();

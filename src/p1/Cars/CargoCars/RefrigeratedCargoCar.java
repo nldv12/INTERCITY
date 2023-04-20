@@ -1,8 +1,8 @@
 package p1.Cars.CargoCars;
 
 public class RefrigeratedCargoCar extends CargoCar {
-    public RefrigeratedCargoCar(String name,String homeStation) {
-        super(name, homeStation);
+    public RefrigeratedCargoCar(String name,boolean isCargo, String homeStation) {
+        super(name,isCargo,homeStation);
         this.type = "RefrigeratedFreightCar";
         this.id = this.hashCode();
         this.netWeight = 30;

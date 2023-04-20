@@ -1,91 +1,64 @@
-Pociąg: PT_0001
-Pociąg pokonał: 25 procent całej trasy
-Pociąg pokonał: 9 procent konkrektnego połączenia
-Ilość wagonów: 5
+Pociąg: CT_1000
+Pociąg pokonał: 126 procent całej trasy
+Pociąg pokonał: 3 procent konkrektnego połączenia
+Ilość wagonów: 4
 Wagony:
-c1
-c5
-c4
-c3
-c2
-Pociąg jedize do stacji: SOUTHAMPTON
-Lokomotywa: l1
-Stacja macierzysta: MILNTHORPE
-Pociąg: PT_0001
-Pociąg pokonał: 2 procent całej trasy
-Pociąg pokonał: 2 procent konkrektnego połączenia
-Ilość wagonów: 5
+Pociąg jedize do stacji: GDAŃŚK
+Lokomotywa: Lokomotywa1
+Stacja macierzysta: WARSZAWA
+Pociąg: CT_1000
+Pociąg pokonał: 134 procent całej trasy
+Pociąg pokonał: 11 procent konkrektnego połączenia
+Ilość wagonów: 4
 Wagony:
-c1
-c5
-c4
-c3
-c2
-Pociąg jedize do stacji: COVENTRY
-Lokomotywa: l1
-Stacja macierzysta: MILNTHORPE
-Pociąg: PT_0001
-Pociąg pokonał: 59 procent całej trasy
-Pociąg pokonał: 29 procent konkrektnego połączenia
-Ilość wagonów: 5
+Pociąg jedize do stacji: GDAŃŚK
+Lokomotywa: Lokomotywa1
+Stacja macierzysta: WARSZAWA
+Pociąg: CT_1000
+Pociąg pokonał: 100 procent całej trasy
+Pociąg pokonał: 0 procent konkrektnego połączenia
+Ilość wagonów: 4
 Wagony:
-c1
-c5
-c4
-c3
-c2
-Pociąg stoi na stacji: Optional[COVENTRY]
-Lokomotywa: l1
-Stacja macierzysta: MILNTHORPE
-Pociąg: PT_0001
-Pociąg pokonał: 16 procent całej trasy
-Pociąg pokonał: 8 procent konkrektnego połączenia
-Ilość wagonów: 5
+Pociąg jedize do stacji: WARSZAWA
+Lokomotywa: Lokomotywa1
+Stacja macierzysta: WARSZAWA
+Pociąg: CT_1000
+Pociąg pokonał: 100 procent całej trasy
+Pociąg pokonał: 0 procent konkrektnego połączenia
+Ilość wagonów: 4
 Wagony:
-c1
-c5
-c4
-c3
-c2
-Pociąg stoi na stacji: Optional[COVENTRY]
-Lokomotywa: l1
-Stacja macierzysta: MILNTHORPE
-Pociąg: PT_0001
-Pociąg pokonał: 41 procent całej trasy
-Pociąg pokonał: 25 procent konkrektnego połączenia
-Ilość wagonów: 5
+Pociąg jedize do stacji: WARSZAWA
+Lokomotywa: Lokomotywa1
+Stacja macierzysta: WARSZAWA
+Pociąg: CT_1000
+Pociąg pokonał: 100 procent całej trasy
+Pociąg pokonał: 0 procent konkrektnego połączenia
+Ilość wagonów: 4
 Wagony:
-c1
-c5
-c4
-c3
-c2
-Pociąg jedize do stacji: SOUTHAMPTON
-Lokomotywa: l1
-Stacja macierzysta: MILNTHORPE
-Pociąg: PT_0001
-Pociąg pokonał: 23 procent całej trasy
-Pociąg pokonał: 23 procent konkrektnego połączenia
-Ilość wagonów: 5
+Pociąg jedize do stacji: WARSZAWA
+Lokomotywa: Lokomotywa1
+Stacja macierzysta: WARSZAWA
+Pociąg: CT_1000
+Pociąg pokonał: 100 procent całej trasy
+Pociąg pokonał: 0 procent konkrektnego połączenia
+Ilość wagonów: 4
 Wagony:
-c1
-c5
-c4
-c3
-c2
-Pociąg jedize do stacji: COVENTRY
-Lokomotywa: l1
-Stacja macierzysta: MILNTHORPE
-Pociąg: PT_0001
-Pociąg pokonał: 0 procent całej trasy
-Pociąg pokonał: 8 procent konkrektnego połączenia
-Ilość wagonów: 5
+Pociąg jedize do stacji: WARSZAWA
+Lokomotywa: Lokomotywa1
+Stacja macierzysta: WARSZAWA
+Pociąg: CT_1000
+Pociąg pokonał: 100 procent całej trasy
+Pociąg pokonał: 0 procent konkrektnego połączenia
+Ilość wagonów: 4
 Wagony:
-c1
-c5
-c4
-c3
-c2
-Pociąg stoi na stacji: Optional[MILNTHORPE]
-Lokomotywa: l1
-Stacja macierzysta: MILNTHORPE
+Pociąg jedize do stacji: WARSZAWA
+Lokomotywa: Lokomotywa1
+Stacja macierzysta: WARSZAWA
+Pociąg: CT_1000
+Pociąg pokonał: 100 procent całej trasy
+Pociąg pokonał: 0 procent konkrektnego połączenia
+Ilość wagonów: 4
+Wagony:
+Pociąg jedize do stacji: WARSZAWA
+Lokomotywa: Lokomotywa1
+Stacja macierzysta: WARSZAWA

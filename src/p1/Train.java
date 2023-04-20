@@ -56,7 +56,7 @@ public class Train {
                 + this.locomotiveName
                 + " ilosc wagonów: "
                 + this.carsNames.size()
-                + "stacja macierzysta: "+ this.homeStationName;
+                + " stacja macierzysta: "+ this.homeStationName;
     }
 
 
